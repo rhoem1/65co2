@@ -1,0 +1,4 @@
+  5 I = RND(-1)
+ 10 FOR I = 1 TO 10
+ 20 PRINT RND(1)
+ 30 NEXT I

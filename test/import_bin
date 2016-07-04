@@ -1,0 +1,47 @@
+#!/usr/bin/php
+<?php
+
+$in_len = filesize($argv[1]);
+
+if($in_len > 0) {
+	if($fp = fopen($argv[1],"rb")) {
+
+
+
+?>
+#define <?=$argv[2]?>_LENGTH <?=$in_len?>
+
+unsigned char <?=$argv[3]?>[<?=$argv[2]?>_LENGTH] = {
+
+<?php
+		$col = 0;
+		while(!feof($fp)) {
+
+			$c = fread($fp,1);
+			$in_len--;
+			if($in_len > -1) {
+				echo '0x'.bin2hex($c);
+
+				if($in_len > 0)
+					echo ',';
+				$col++;
+				if($col < 16) {
+					echo ' ';
+				} else {
+					echo "\n";
+					$col = 0;
+				}
+			}
+
+		}
+
+?>
+
+};
+
+<?php
+		fclose($fp);
+
+	}
+
+}

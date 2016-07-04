@@ -1,0 +1,43 @@
+#!/usr/bin/php
+<?php
+
+$data = array();
+
+$in = file_get_contents($argv[1]);
+$in = explode("\n",$in);
+
+foreach($in as $line) {
+	if(strlen($line)) {
+		$len = hexdec(substr($line,1,2));
+		$addr = substr($line,3,4);
+		$cmd = substr($line,7,2);
+		$checksum = hexdec(substr($line,-2));
+		switch($cmd) {
+		case '00':
+			echo $addr.':';
+			// should checksum data, but eh
+			for($i = 0; $i < $len; $i++) {
+				echo $line{9 + $i * 2}.$line{9 + $i * 2 + 1}.' ';
+			}
+			echo "\n";
+			break;
+		case '01':
+			// end of data
+			break;
+		case '02':
+			// extended segment
+			break;
+		case '03':
+			// start segment
+			break;
+		case '04':
+			// 32bit data segment
+			break;
+		case '05':
+			// 32bit start location
+			break;
+		}
+	}
+}	
+
+		
