@@ -5,36 +5,37 @@
 
 ; GETchar from wozmon, mostly
 MONRDKEY:
-		lda     KBcr     
-		bpl     MONRDKEY
-		lda     KBin    ; get key
-		rts
+        lda     KBcr     
+        bpl     MONRDKEY
+        lda     KBin    ; get key
+        rts
 
 MONRDLINE:
-
-		ldx #0
-		jmp APPLENEXTCHAR
+        stx     $33
+        ldx     #0
+        jmp     APPLENEXTCHAR
 NOTCR:
-        cmp #$DF
-		beq APPLEBACKSPACE
-		inx
-		bne APPLENEXTCHAR
-; reset input if we hit 255 chars
-		lda #$DC
-		jsr MONCOUT
+        cmp     #$DF
+        beq     APPLEBACKSPACE
+        inx     
+        bne     APPLENEXTCHAR
+        ; reset input if we hit 255 chars
+        lda     #$DC
+        jsr     MONCOUT
 APPLEGETLINE:
-		lda #$8D
-		jsr MONCOUT
-		ldx #$01
+        lda     #$8D
+        jsr     MONCOUT
+
+        ldx     #$01
 APPLEBACKSPACE:
-		dex
-		bmi APPLEGETLINE
+        dex
+        bmi     APPLEGETLINE
 APPLENEXTCHAR:
-		jsr MONRDKEY
-		sta     INPUTBUFFER,x
-		jsr     MONCOUT
-		cmp     #$8D
-		bne     NOTCR
+        jsr     MONRDKEY
+        sta     INPUTBUFFER,x
+        jsr     MONCOUT
+        cmp     #$8D
+        bne     NOTCR
 ; replace CR with a 0, strip high bit
         ldx     #$00
 L2907:
