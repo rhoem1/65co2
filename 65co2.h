@@ -719,11 +719,7 @@ struct SixtyFiveCeeOhTwo {
 
 			case ADR_NONE:
 			case ADR_IMPL:
-				address = 0;
-				break;
 			case ADR_A:
-				address = 0;
-				break;
 			case ADR_IMM:
 				address = 0;
 				break;
@@ -731,6 +727,7 @@ struct SixtyFiveCeeOhTwo {
 			case ADR_ABS:
 				address = readMemoryWord(r.PC);
 				break;
+
 			case ADR_ABS_X:
 				// look for page crossings
 				address = readMemoryWord(r.PC);
