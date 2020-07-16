@@ -24,7 +24,6 @@
 #include <list>
 #include <iostream>
 #include <iomanip>
-using namespace std;
 
 
 #include <stdio.h>
@@ -381,7 +380,7 @@ struct AppleOne : public SixtyFiveCeeOhTwo {
 	}
 
 	// buffer to hold keyboard data
-	string keyboardBuffer;
+	std::string keyboardBuffer;
 
 	/**
 	 * check for input, set PIA KB/KBcr status
