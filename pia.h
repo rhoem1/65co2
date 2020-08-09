@@ -1,6 +1,7 @@
 #ifndef __PIA_H__
 #define __PIA_H__
 
+#include "65co2.h"
 
 /*
  * The Peripherial Interface Adapter
@@ -11,7 +12,7 @@
 
 struct SixtyFiveTwenty {
 
-	SixtyFiveOhTwo *cpu;
+	SixtyFiveCeeOhTwo *cpu;
 
 	typedef struct __controlreg {
 		bool irq1;
@@ -50,24 +51,97 @@ struct SixtyFiveTwenty {
 	unsigned char DA; // data A 
 	unsigned char DB; // data B
 
+	struct piaMemoryInterceptCA : public memoryIntercept {
+		SixtyFiveTwenty *pia;
+		SixtyFiveCeeOhTwo *cpu;
+		piaMemoryInterceptCA(SixtyFiveCeeOhTwo *CPU, SixtyFiveTwenty *PIA) {
+			cpu = CPU;
+			pia = PIA;
+		}
+		// write a byte to a register from cpu
+		void write(unsigned char value) {
+			pia->CA.setByte(value);
+		}
 
-	struct piaMemoryInterceptCA *pMICA;
-	struct piaMemoryInterceptCB *pMICB;
-	struct piaMemoryInterceptDA *pMIDA;
-	struct piaMemoryInterceptDB *pMIDB;
+		// read a register from cpu
+		unsigned char read() {
+			return pia->CA.getByte();
+		}
+
+	};
+	struct piaMemoryInterceptDA : public memoryIntercept {
+		SixtyFiveTwenty *pia;
+		SixtyFiveCeeOhTwo *cpu;
+		piaMemoryInterceptDA(SixtyFiveCeeOhTwo *CPU, SixtyFiveTwenty *PIA) {
+			cpu = CPU;
+			pia = PIA;
+		}
+		// write a byte to a register from cpu
+		void write(unsigned char value) {
+			pia->CB.setByte(value);
+		}
+
+		// read a register from cpu
+		unsigned char read() {
+			return pia->CB.getByte();
+		}
+
+	};
+	struct piaMemoryInterceptCB : public memoryIntercept {
+		SixtyFiveTwenty *pia;
+		SixtyFiveCeeOhTwo *cpu;
+		piaMemoryInterceptCB(SixtyFiveCeeOhTwo *CPU, SixtyFiveTwenty *PIA) {
+			cpu = CPU;
+			pia = PIA;
+		}
+		// write a byte to a register from cpu
+		void write(unsigned char value) {
+			pia->DA = value;
+		}
+
+		// read a register from cpu
+		unsigned char read() {
+			return pia->DA;
+		}
+
+	};
+	struct piaMemoryInterceptDB : public memoryIntercept {
+		SixtyFiveTwenty *pia;
+		SixtyFiveCeeOhTwo *cpu;
+		piaMemoryInterceptDB(SixtyFiveCeeOhTwo *CPU, SixtyFiveTwenty *PIA) {
+			cpu = CPU;
+			pia = PIA;
+		}
+		// write a byte to a register from cpu
+		void write(unsigned char value) {
+			pia->DB = value;
+		}
+
+		// read a register from cpu
+		unsigned char read() {
+			return pia->DB;
+		}
+
+	};
+
+
+	piaMemoryInterceptCA *pMICA;
+	piaMemoryInterceptCB *pMICB;
+	piaMemoryInterceptDA *pMIDA;
+	piaMemoryInterceptDB *pMIDB;
 
 
 
-	SixtyFiveTwenty(SixtyFiveOhTwo *CPU, unsigned short address) {
+	SixtyFiveTwenty(SixtyFiveCeeOhTwo *CPU, unsigned short address) {
 		cpu = CPU;
-		pMICA = new piaMemoryInterceptCA(CPU,this);
-		pMICB = new piaMemoryInterceptCB(CPU,this);
-		pMIDA = new piaMemoryInterceptDA(CPU,this);
-		pMIDB = new piaMemoryInterceptDB(CPU,this);
-		cpu->intercepts[address] = &pMICA;
-		cpu->intercepts[address + 1] = &pMICB;
-		cpu->intercepts[address + 2] = &pMIDA;
-		cpu->intercepts[address + 3] = &pMIDB;
+		pMICA = new piaMemoryInterceptCA(CPU, this);
+		pMICB = new piaMemoryInterceptCB(CPU, this);
+		pMIDA = new piaMemoryInterceptDA(CPU, this);
+		pMIDB = new piaMemoryInterceptDB(CPU, this);
+		cpu->addIntercept(address, pMICA);
+		cpu->addIntercept(address + 1, pMICB);
+		cpu->addIntercept(address + 2, pMIDA);
+		cpu->addIntercept(address + 3, pMIDB);
 
 	}
 
@@ -96,98 +170,45 @@ struct SixtyFiveTwenty {
 	// interrupts
 	void setIrqA1() {
 		CA.irq1 = true;
-		cpu->interrupt_cpu();
+		cpu->maskable_interrupt();
 	}
 
 	void setIrqA2() {
 		CA.irq2 = true;
-		cpu->interrupt_cpu();
+		cpu->maskable_interrupt();
 	}
 
 	void setIrqB1() {
 		CB.irq1 = true;
-		cpu->interrupt_cpu();
+		cpu->maskable_interrupt();
 	}
 
 	void setIrqB2() {
 		CB.irq2 = true;
-		cpu->interrupt_cpu();
+		cpu->maskable_interrupt();
 	}
 
+	void clearIrqA1() {
+		CA.irq1 = false;
+		cpu->clear_maskable_interrupt();
+	}
+
+	void clearIrqA2() {
+		CA.irq2 = false;
+		cpu->clear_maskable_interrupt();
+	}
+
+	void clearIrqB1() {
+		CB.irq1 = false;
+		cpu->clear_maskable_interrupt();
+	}
+
+	void clearIrqB2() {
+		CB.irq2 = false;
+		cpu->clear_maskable_interrupt();
+	}
 	
 
-
-
 };
-
-
-struct piaMemoryInterceptCA : public memoryIntercept {
-	SixtyFiveTwenty *pia;
-	piaMemoryInterceptCA(SixtyFiveOhTwo *CPU, SixtyFiveTwenty *PIA) {
-		cpu = CPU;
-		pia = PIA;
-	}
-	// write a byte to a register from cpu
-	void write(unsigned char value) {
-		pia->CA.setByte(value);
-	}
-
-	// read a register from cpu
-	unsigned char read() {
-		return pia->CA.getByte();
-	}
-
-}
-struct piaMemoryInterceptDA : public memoryIntercept {
-	SixtyFiveTwenty *pia;
-	piaMemoryInterceptDA(SixtyFiveOhTwo *CPU, SixtyFiveTwenty *PIA) {
-		cpu = CPU;
-		pia = PIA;
-	}
-	// write a byte to a register from cpu
-	void write(unsigned char value) {
-		pia->CB.setByte(value);
-	}
-
-	// read a register from cpu
-	unsigned char read() {
-		return pia->CB.getByte();
-	}
-
-}
-struct piaMemoryInterceptCB : public memoryIntercept {
-	SixtyFiveTwenty *pia;
-	piaMemoryInterceptCB(SixtyFiveOhTwo *CPU, SixtyFiveTwenty *PIA) {
-		cpu = CPU;
-		pia = PIA;
-	}
-	// write a byte to a register from cpu
-	void write(unsigned char value) {
-		pia->DA = value;
-	}
-
-	// read a register from cpu
-	unsigned char read() {
-		return pia->DA;
-	}
-
-}
-struct piaMemoryInterceptDB : public memoryIntercept {
-	SixtyFiveTwenty *pia;
-	piaMemoryInterceptDB(SixtyFiveOhTwo *CPU, SixtyFiveTwenty *PIA) {
-		cpu = CPU;
-		pia = PIA;
-	}
-	// write a byte to a register from cpu
-	void write(unsigned char value) {
-		pia->DB = value;
-	}
-
-	// read a register from cpu
-	unsigned char read() {
-		return pia->DB;
-	}
-
-}
 
 #endif
