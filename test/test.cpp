@@ -371,7 +371,7 @@ struct AppleOne : public SixtyFiveCeeOhTwo {
 						// F12 to break
 						if(keyboardBuffer == "[24~") {
 							c = 0;
-							nmi_interrupt_cpu();
+							non_maskable_interrupt();
 						} else
 					    // F2 to reset
 						if(keyboardBuffer == "OQ") {
