@@ -319,8 +319,8 @@ int main(int argc, char *argv[])
 			// mix in Krusader
 			apple->cpu->addInterceptRange(KRUSADER, KRUSADER_LENGTH, &Krusader);
 			// set NMI to hop into Krusader's debugger
-			apple->cpu->memory[0xFFFE] = 0x19;
-			apple->cpu->memory[0xFFFF] = 0xFE;
+			apple->cpu->write(0xFFFE, 0x19);
+			apple->cpu->write(0xFFFF, 0xFE);
 			apple->cpu->setPC(KRUSADER);
 			break;
 		case 'm':
@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
 	while (apple->running)
 	{
 		// run an op, get the cycles used
-		int cycles = apple->cpu->do_op();
+		int cycles = apple->cpu->do_cycle();
 
 		// pass the cycles used to things that need to know
 		apple->cycleCounter->update(cycles);

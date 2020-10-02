@@ -81,7 +81,7 @@ ESCAPE          lda     #PROMPT        ;Print prompt character
 GETLINE         lda     #CR            ;Send CR
                 jsr     ECHO
 
-                ldy     #0+1           ;Start a new input line
+GETLINE_NOCR    ldy     #0+1           ;Start a new input line
 BACKSPACE       dey                    ;Backup text index
                 bmi     GETLINE        ;Oops, line's empty, reinitialize
 

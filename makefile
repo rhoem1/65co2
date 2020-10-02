@@ -9,7 +9,7 @@ DASM=/opt/dasm/bin/dasm
 EXE=
 
 
-OBJS= apple1.o 
+OBJS= apple1.o 65co2.o
 
 all: apple1
 
@@ -24,6 +24,9 @@ intout.bin: asm/intout.s
 
 # depends
 apple1.o:apple1.cpp apple1.h 65co2.h apple1basic.h applesoft_lite_0_4.h msbasic.h msbasic_code.h
+	$(CC) $(CPPFLAGS) -o $@ -c $<
+
+65co2.o:65co2.cpp 65co2.h
 	$(CC) $(CPPFLAGS) -o $@ -c $<
 
 
