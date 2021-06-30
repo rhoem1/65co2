@@ -237,10 +237,9 @@ struct AppleOne
         cpu->addIntercept(0xD012, piaDSP);
         cpu->addIntercept(0xD013, piaDSPcr);
 
-        cpu->addIntercept(0xD01E, miRNG);
-        cpu->addIntercept(0xD01F, cycleCounter);
+        cpu->addIntercept(0xCFFF, miRNG);
 
-        cpu->addIntercept(0xDFFF, stopEmulation);
+        cpu->addIntercept(0xD01F, stopEmulation);
     }
 
     ~AppleOne()

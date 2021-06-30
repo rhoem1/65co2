@@ -1,0 +1,68 @@
+--- Symbol List (sorted by symbol)
+BLINKMASK                0007                  
+CACTV                    0008                  
+CHARACTER_ROM            d400                  
+CHARACTER_ROM_LENGTH     0400                  
+CHARROM                  d400                  
+CHRAM                    0020                  
+COLOR_PALLET_BLUE_HIGH   def8                  
+COLOR_PALLET_BLUE_LOW    de78                  
+COLOR_PALLET_GREEN_HIGH  ddf8                  
+COLOR_PALLET_GREEN_LOW   dd78                  
+COLOR_PALLET_LENGTH      0008                  
+COLOR_PALLET_RED_HIGH    dcf8                  
+COLOR_PALLET_RED_LOW     dc78                  
+CURSORCHARACTER          d006                  
+CURSORCOLOR              d005                  
+CYCLECOUNTER             d00d                  
+DSP                      d012                  
+DSPCR                    d013                  
+ECHO                     ffef              (R )
+H                        0029                  
+HOSTRNG                  cfff              (R )
+IDVID                    0080                  
+INTBASIC                 e000                  
+INVRT                    0010                  
+IRQ                      fffa                  
+KBD                      d010                  
+KBDCR                    d011                  
+KRUSADER                 f000                  
+L                        0028                  
+loop                     2000              (R )
+MODE                     002b                  
+NMI_IRQ                  fffe                  
+PHASOR_CHIP_0            d020                  
+PHASOR_CHIP_1            d040                  
+PHASOR_CHIP_B            d060                  
+PHASOR_CONTROL           d080                  
+PHASOR_CONTROL_LENGTH    0010                  
+PHASOR_DDRA              d023                  
+PHASOR_DDRA2             d043                  
+PHASOR_DDRB              d022                  
+PHASOR_DDRB2             d042                  
+PHASOR_ORA               d021                  
+PHASOR_ORA2              d041                  
+PHASOR_ORB               d020                  
+PHASOR_ORB2              d040                  
+PRBYTE                   ffdc                  
+print                    200c              (R )
+QUIT_EMULATION           d01f                  
+ROWBLANK                 d002                  
+SCANCOL                  d004                  
+SCANROW                  d003                  
+SCREEN                   d800                  
+SCREEN_ADDRESS           d800                  
+SCREEN_COLOR             dc00                  
+SCREEN_COLOR_ADDRESS     dc00                  
+SCREEN_COLOR_LENGTH      0400                  
+SCREEN_CONTROL           d000                  
+SCREEN_LENGTH            0400                  
+SCREENROWOFFSET          d00c                  
+slash                    200a              (R )
+STH                      0027                  
+STL                      0026                  
+VIDBLANK                 d001                  
+WOZMON                   ff00                  
+XAMH                     0025                  
+XAML                     0024                  
+--- End of Symbol List.

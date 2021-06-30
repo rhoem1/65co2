@@ -51,9 +51,26 @@ L2912:
         ldx     $33
         rts
 
+INLINX:
+        jsr     OUTQUES
+        jsr     OUTSP
+        ldx     #$80
+        jmp     INLIN1
 
-.else
+USR_FUNC:
+        jsr     L29DA
+        lda     FAC+3
+        sta     FAC+5
+        jmp     (FAC+4)
+L29DA:
+        jmp     (GOAYINT)
 
+.endif
+
+
+
+
+.ifdef APPLE_2
 MONRDLINE:
         jsr     LFD6A
         stx     $33
@@ -70,24 +87,9 @@ L2912:
         bne     L2907
         ldx     $33
         rts
-.endif
-
-USR_FUNC:
-        jsr     L29DA
-        lda     FAC+3
-        sta     FAC+5
-        jmp     (FAC+4)
-L29DA:
-        jmp     (GOAYINT)
-
-INLINX:
-        jsr     OUTQUES
-        jsr     OUTSP
-        ldx     #$80
-        jmp     INLIN1
 
 
-.ifdef APPLE_2
+
         .byte   0,0,0
 
 PLT:

@@ -1423,12 +1423,13 @@ FOUT:
 ; (THIS IS USED AS A FLAG)
 ; ----------------------------------------------------------------------------
 FOUT1:
-        lda     #$20
+        lda     #$2D
+				dey
         bit     FACSIGN
         bpl     L3C73
-        lda     #$2D
-L3C73:
+        iny
         sta     $FF,y
+L3C73:
         sta     FACSIGN
         sty     STRNG2
         iny

@@ -49,6 +49,7 @@ PRINT2:
 L29B1:
 .endif
         jsr     STRPRT
+        jmp     L297E
 .ifdef KBD
         jmp     L297E
 .else

@@ -21,97 +21,6 @@
 #define SR_ZERO_B 0x02
 #define SR_CARRY_B 0x01
 
-// addressing modes
-enum eADDRESSING
-{
-	ADR_NON = 0,
-	ADR_IMP,
-	ADR_IMM,
-	ADR_ABS,
-	ADR_ABX,
-	ADR_ABY,
-	ADR_IND,
-	ADR_AIX,
-	ADR_INX,
-	ADR_INY,
-	ADR_ZPG,
-	ADR_ZPX,
-	ADR_ZPY,
-	ADR_ZPI,
-	ADR_ACC,
-	ADR_REL
-};
-
-enum eOPCODES
-{
-	OP_BAD = 0,
-	OP_ADC, // add with carry
-	OP_AND, // and (with accumulator)
-	OP_ASL, // arithmetic shift left
-	OP_BCC, // branch on carry clear
-	OP_BCS, // branch on carry set
-	OP_BEQ, // branch on equal (zero set)
-	OP_BIT, // bit test
-	OP_BMI, // branch on minus (negative set)
-	OP_BNE, // branch on not equal (zero clear)
-	OP_BPL, // branch on plus (negative clear)
-	OP_BRA, // branch always
-	OP_BRK, // interrupt
-	OP_BVC, // branch on overflow clear
-	OP_BVS, // branch on overflow set
-	OP_CLC, // clear carry
-	OP_CLD, // clear decimal
-	OP_CLI, // clear interrupt disable
-	OP_CLV, // clear overflow
-	OP_CMP, // compare (with accumulator)
-	OP_CPX, // compare with X
-	OP_CPY, // compare with Y
-	OP_DEC, // decrement
-	OP_DEX, // decrement X
-	OP_DEY, // decrement Y
-	OP_EOR, // exclusive or (with accumulator)
-	OP_INC, // increment
-	OP_INX, // increment X
-	OP_INY, // increment Y
-	OP_JMP, // jump
-	OP_JSR, // jump subroutine
-	OP_LDA, // load accumulator
-	OP_LDX, // load X
-	OP_LDY, // load Y
-	OP_LSR, // logical shift right
-	OP_NOP, // no operation
-	OP_ORA, // or with accumulator
-	OP_PHA, // push accumulator
-	OP_PHP, // push processor status (SR)
-	OP_PLA, // pull accumulator
-	OP_PLP, // pull processor status (SR)
-	OP_PHX, // push X
-	OP_PHY, // push Y
-	OP_PLX, // pull X
-	OP_PLY, // pull Y
-	OP_ROL, // rotate left
-	OP_ROR, // rotate right
-	OP_RTI, // return from interrupt
-	OP_RTS, // return from subroutine
-	OP_SBC, // subtract with carry
-	OP_SEC, // set carry
-	OP_SED, // set decimal
-	OP_SEI, // set interrupt disable
-	OP_STA, // store accumulator
-	OP_STX, // store X
-	OP_STY, // store Y
-	OP_STZ, // store a 0
-	OP_TAX, // transfer accumulator to X
-	OP_TAY, // transfer accumulator to Y
-	OP_TSX, // transfer stack pointer to X
-	OP_TXA, // transfer X to accumulator
-	OP_TXS, // transfer X to stack pointer
-	OP_TYA, // transfer Y to accumulator
-	OP_TRB, // test and reset bits
-	OP_TSB	// test and set bits
-};
-
-
 struct memoryIntercept
 {
 	memoryIntercept() {}
@@ -120,11 +29,9 @@ struct memoryIntercept
 	virtual void write(uint8_t value, uint16_t address) {}
 };
 
-
 class SixtyFiveCeeOhTwo
 {
 public:
-
 	SixtyFiveCeeOhTwo();
 
 	// read a byte from memory ignoring intercepts
@@ -143,6 +50,12 @@ public:
 	inline void write(uint16_t address, int value)
 	{
 		memory[address] = value & 0xFF;
+	}
+
+	inline void load(uint8_t *source, uint16_t start, uint16_t length)
+	{
+		for(uint16_t a = 0; a < length; ++a)
+			memory[start + a] = source[a];
 	}
 
 	// increment a byte
@@ -220,74 +133,164 @@ public:
 	void printCpuStateHeader();
 
 private:
-
-typedef struct __registers
-{
-	uint8_t cycles;
-	uint16_t PC;	   // program counter
-	uint16_t old_PC; // program counter
-	int32_t A;				   // Accumulator
-	int32_t X;				   // X index
-	int32_t Y;				   // Y index
-	uint8_t SP;	   // stack pointer
-
-	bool SR_NEGATIVE;
-	bool SR_OVERFLOW;
-	bool SR_DECIMAL;
-	bool SR_INTERRUPT;
-	bool SR_ZERO;
-	bool SR_CARRY;
-
-	bool intb;
-
-	inline void SRsetByte(uint8_t b)
+	// addressing modes
+	enum eADDRESSING
 	{
-		SR_NEGATIVE = (b & SR_NEGATIVE_B);
-		SR_OVERFLOW = (b & SR_OVERFLOW_B);
-		SR_DECIMAL = (b & SR_DECIMAL_B);
-		SR_INTERRUPT = (b & SR_INTERRUPT_B);
-		SR_ZERO = (b & SR_ZERO_B);
-		SR_CARRY = (b & SR_CARRY_B);
-	}
-	inline uint8_t SRgetByte(bool SR_BREAK)
-	{
-		return (SR_NEGATIVE ? SR_NEGATIVE_B : 0) |
-				(SR_OVERFLOW ? SR_OVERFLOW_B : 0) |
-				SR_UNUSED_B |
-				(SR_BREAK ? SR_BREAK_B : 0) |
-				(SR_DECIMAL ? SR_DECIMAL_B : 0) |
-				(SR_INTERRUPT ? SR_INTERRUPT_B : 0) |
-				(SR_ZERO ? SR_ZERO_B : 0) |
-				(SR_CARRY ? SR_CARRY_B : 0);
-	}
+		ADR_NON = 0,
+		ADR_IMP,
+		ADR_IMM,
+		ADR_ABS,
+		ADR_ABX,
+		ADR_ABY,
+		ADR_IND,
+		ADR_AIX,
+		ADR_INX,
+		ADR_INY,
+		ADR_ZPG,
+		ADR_ZPX,
+		ADR_ZPY,
+		ADR_ZPI,
+		ADR_ACC,
+		ADR_REL
+	};
 
-	inline void SRsetNZ(uint8_t v)
+	enum eOPCODES
 	{
-		SR_NEGATIVE = (v & SR_NEGATIVE_B) == SR_NEGATIVE_B;
-		SR_ZERO = (v == 0x00);
-	}
+		OP_BAD = 0,
+		OP_ADC, // add with carry
+		OP_AND, // and (with accumulator)
+		OP_ASL, // arithmetic shift left
+		OP_BCC, // branch on carry clear
+		OP_BCS, // branch on carry set
+		OP_BEQ, // branch on equal (zero set)
+		OP_BIT, // bit test
+		OP_BMI, // branch on minus (negative set)
+		OP_BNE, // branch on not equal (zero clear)
+		OP_BPL, // branch on plus (negative clear)
+		OP_BRA, // branch always
+		OP_BRK, // interrupt
+		OP_BVC, // branch on overflow clear
+		OP_BVS, // branch on overflow set
+		OP_CLC, // clear carry
+		OP_CLD, // clear decimal
+		OP_CLI, // clear interrupt disable
+		OP_CLV, // clear overflow
+		OP_CMP, // compare (with accumulator)
+		OP_CPX, // compare with X
+		OP_CPY, // compare with Y
+		OP_DEC, // decrement
+		OP_DEX, // decrement X
+		OP_DEY, // decrement Y
+		OP_EOR, // exclusive or (with accumulator)
+		OP_INC, // increment
+		OP_INX, // increment X
+		OP_INY, // increment Y
+		OP_JMP, // jump
+		OP_JSR, // jump subroutine
+		OP_LDA, // load accumulator
+		OP_LDX, // load X
+		OP_LDY, // load Y
+		OP_LSR, // logical shift right
+		OP_NOP, // no operation
+		OP_ORA, // or with accumulator
+		OP_PHA, // push accumulator
+		OP_PHP, // push processor status (SR)
+		OP_PLA, // pull accumulator
+		OP_PLP, // pull processor status (SR)
+		OP_PHX, // push X
+		OP_PHY, // push Y
+		OP_PLX, // pull X
+		OP_PLY, // pull Y
+		OP_ROL, // rotate left
+		OP_ROR, // rotate right
+		OP_RTI, // return from interrupt
+		OP_RTS, // return from subroutine
+		OP_SBC, // subtract with carry
+		OP_SEC, // set carry
+		OP_SED, // set decimal
+		OP_SEI, // set interrupt disable
+		OP_STA, // store accumulator
+		OP_STX, // store X
+		OP_STY, // store Y
+		OP_STZ, // store a 0
+		OP_TAX, // transfer accumulator to X
+		OP_TAY, // transfer accumulator to Y
+		OP_TSX, // transfer stack pointer to X
+		OP_TXA, // transfer X to accumulator
+		OP_TXS, // transfer X to stack pointer
+		OP_TYA, // transfer Y to accumulator
+		OP_TRB, // test and reset bits
+		OP_TSB	// test and set bits
+	};
 
-	inline void SRborrow(uint16_t alu)
+	typedef struct __registers
 	{
-		SR_CARRY = (alu & 0x100) == 0;
-	}
+		uint8_t cycles;
+		uint16_t PC;	 // program counter
+		uint16_t old_PC; // program counter
+		int32_t A;		 // Accumulator
+		int32_t X;		 // X index
+		int32_t Y;		 // Y index
+		uint8_t SP;		 // stack pointer
 
-	inline void SRcarry(uint16_t alu)
-	{
-		SR_CARRY = (alu & 0x100) != 0;
-	}
+		bool SR_NEGATIVE;
+		bool SR_OVERFLOW;
+		bool SR_DECIMAL;
+		bool SR_INTERRUPT;
+		bool SR_ZERO;
+		bool SR_CARRY;
 
-} REGISTERS;
+		bool intb;
+
+		inline void SRsetByte(uint8_t b)
+		{
+			SR_NEGATIVE = (b & SR_NEGATIVE_B);
+			SR_OVERFLOW = (b & SR_OVERFLOW_B);
+			SR_DECIMAL = (b & SR_DECIMAL_B);
+			SR_INTERRUPT = (b & SR_INTERRUPT_B);
+			SR_ZERO = (b & SR_ZERO_B);
+			SR_CARRY = (b & SR_CARRY_B);
+		}
+		inline uint8_t SRgetByte(bool SR_BREAK)
+		{
+			return (SR_NEGATIVE ? SR_NEGATIVE_B : 0) |
+				   (SR_OVERFLOW ? SR_OVERFLOW_B : 0) |
+				   SR_UNUSED_B |
+				   (SR_BREAK ? SR_BREAK_B : 0) |
+				   (SR_DECIMAL ? SR_DECIMAL_B : 0) |
+				   (SR_INTERRUPT ? SR_INTERRUPT_B : 0) |
+				   (SR_ZERO ? SR_ZERO_B : 0) |
+				   (SR_CARRY ? SR_CARRY_B : 0);
+		}
+
+		inline void SRsetNZ(uint8_t v)
+		{
+			SR_NEGATIVE = (v & SR_NEGATIVE_B) == SR_NEGATIVE_B;
+			SR_ZERO = (v == 0x00);
+		}
+
+		inline void SRborrow(uint16_t alu)
+		{
+			SR_CARRY = (alu & 0x100) == 0;
+		}
+
+		inline void SRcarry(uint16_t alu)
+		{
+			SR_CARRY = (alu & 0x100) != 0;
+		}
+
+	} REGISTERS;
 
 	// opcode attributes
 	struct OPCODE
 	{
-		OPCODE(eOPCODES _opcode, uint8_t (SixtyFiveCeeOhTwo::*_op)(void), eADDRESSING _mode, uint8_t (SixtyFiveCeeOhTwo::*_fetch)(), uint8_t _step, uint8_t _cycles, uint8_t _rw) {
-			opcode = _opcode; 
-			op = _op; 
-			mode = _mode; 
-			fetch = _fetch; 
-			step = _step; 
+		OPCODE(eOPCODES _opcode, uint8_t (SixtyFiveCeeOhTwo::*_op)(void), eADDRESSING _mode, uint8_t (SixtyFiveCeeOhTwo::*_fetch)(), uint8_t _step, uint8_t _cycles, uint8_t _rw)
+		{
+			opcode = _opcode;
+			op = _op;
+			mode = _mode;
+			fetch = _fetch;
+			step = _step;
 			cycles = _cycles;
 			rw = _rw;
 		};
@@ -298,9 +301,9 @@ typedef struct __registers
 		eADDRESSING mode; // addressing mode
 		uint8_t (SixtyFiveCeeOhTwo::*fetch)() = nullptr;
 
-		uint8_t step;	  // PC steps
+		uint8_t step;	// PC steps
 		uint8_t cycles; // minimum cycles
-		uint8_t rw;	  // write mode
+		uint8_t rw;		// write mode
 	};
 
 	// opcode attribute table
@@ -587,7 +590,6 @@ typedef struct __registers
 
 	std::map<void *, bool> interruptSources;
 
-
 	/**
 	 * read a byte from an address through the intercepts
 	 */
@@ -609,18 +611,13 @@ typedef struct __registers
 	/**
 	 * write a byte to an address through the intercepts
 	 */
-	inline void writeIn(uint16_t address, int value)
+	inline void writeIn(uint16_t address, uint8_t value)
 	{
 		if (intercepts[address])
-		{
 			intercepts[address]->write(value & 0xFF, address);
-		}
 		else
-			memory[address] = value & 0xFF;
+			memory[address] = value;
 	}
-
-
-
 
 	/**
 	 * push cpu state on interrupt
@@ -636,7 +633,6 @@ typedef struct __registers
 	 * pop a byte from the stack
 	 */
 	uint8_t pop_stack();
-
 
 	/**
 	 * Addressing modes
@@ -658,34 +654,74 @@ typedef struct __registers
 	uint8_t A_ACC(); // ADR_A
 	uint8_t A_REL(); // ADR_REL
 
-
 	/**
 	 * Opcodes
 	 */
 	uint8_t BAD();
-	uint8_t ADC(); uint8_t AND(); uint8_t ASL();
-	uint8_t BCC(); uint8_t BCS(); uint8_t BEQ(); uint8_t BIT(); uint8_t BMI(); uint8_t BNE();
-	uint8_t BPL(); uint8_t BRA(); uint8_t BRK(); uint8_t BVC(); uint8_t BVS();
-	uint8_t CLC(); uint8_t CLD(); uint8_t CLI(); uint8_t CLV(); uint8_t CMP(); uint8_t CPX();
+	uint8_t ADC();
+	uint8_t AND();
+	uint8_t ASL();
+	uint8_t BCC();
+	uint8_t BCS();
+	uint8_t BEQ();
+	uint8_t BIT();
+	uint8_t BMI();
+	uint8_t BNE();
+	uint8_t BPL();
+	uint8_t BRA();
+	uint8_t BRK();
+	uint8_t BVC();
+	uint8_t BVS();
+	uint8_t CLC();
+	uint8_t CLD();
+	uint8_t CLI();
+	uint8_t CLV();
+	uint8_t CMP();
+	uint8_t CPX();
 	uint8_t CPY();
-	uint8_t DEC(); uint8_t DEX(); uint8_t DEY();
+	uint8_t DEC();
+	uint8_t DEX();
+	uint8_t DEY();
 	uint8_t EOR();
-	uint8_t INC(); uint8_t INX(); uint8_t INY();
-	uint8_t JMP(); uint8_t JSR();
-	uint8_t LDA(); uint8_t LDX(); uint8_t LDY(); uint8_t LSR();
+	uint8_t INC();
+	uint8_t INX();
+	uint8_t INY();
+	uint8_t JMP();
+	uint8_t JSR();
+	uint8_t LDA();
+	uint8_t LDX();
+	uint8_t LDY();
+	uint8_t LSR();
 	uint8_t NOP();
 	uint8_t ORA();
-	uint8_t PHA(); uint8_t PHP(); uint8_t PLA(); uint8_t PLP();
-	uint8_t PHX(); uint8_t PLX();
-	uint8_t PHY(); uint8_t PLY();
-	uint8_t ROL(); uint8_t ROR(); uint8_t RTI(); uint8_t RTS();
-	uint8_t SBC(); uint8_t SEC(); uint8_t SED(); uint8_t SEI(); uint8_t STA(); uint8_t STX();
-	uint8_t STY(); uint8_t STZ();
-	uint8_t TAX(); uint8_t TAY();
-	uint8_t TXA(); uint8_t TYA();
-	uint8_t TSX(); uint8_t TXS(); 
-	uint8_t TRB(); uint8_t TSB();
-
+	uint8_t PHA();
+	uint8_t PHP();
+	uint8_t PLA();
+	uint8_t PLP();
+	uint8_t PHX();
+	uint8_t PLX();
+	uint8_t PHY();
+	uint8_t PLY();
+	uint8_t ROL();
+	uint8_t ROR();
+	uint8_t RTI();
+	uint8_t RTS();
+	uint8_t SBC();
+	uint8_t SEC();
+	uint8_t SED();
+	uint8_t SEI();
+	uint8_t STA();
+	uint8_t STX();
+	uint8_t STY();
+	uint8_t STZ();
+	uint8_t TAX();
+	uint8_t TAY();
+	uint8_t TXA();
+	uint8_t TYA();
+	uint8_t TSX();
+	uint8_t TXS();
+	uint8_t TRB();
+	uint8_t TSB();
 };
 
 /**

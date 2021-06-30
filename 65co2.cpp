@@ -196,7 +196,7 @@ uint8_t SixtyFiveCeeOhTwo::do_cycle()
 	if (!r.SR_INTERRUPT && r.intb)
 	{
 		push_cpu_interrupt(r.PC, false);
-		r.PC = readInWord(IRQBRK_VECTOR);
+		setPC(readInWord(IRQBRK_VECTOR));
 		r.SR_DECIMAL = false;
 		r.SR_INTERRUPT = true;
 		r.cycles += 8;
@@ -322,9 +322,7 @@ uint8_t SixtyFiveCeeOhTwo::A_IMM()
 {
 	address = 0;
 	if (!OPCODES[opcode].rw)
-	{
 		alu = readInByte(r.PC);
-	}
 	return 0;
 }
 // ADR_ABS

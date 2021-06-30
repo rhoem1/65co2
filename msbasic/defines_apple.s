@@ -6,9 +6,10 @@ CONFIG_APPLE := 1
 
 ;APPLE_BAD_BYTE := 1
 CONFIG_IO_MSB := 1 ; all I/O has bit #7 set
-CONFIG_PRINT_CR := 1 ; print CR when line end reached
+;CONFIG_PRINT_CR := 1 ; print CR when line end reached
 CONFIG_SAFE_NAMENOTFOUND := 1
 CONFIG_SCRTCH_ORDER := 3
+CONFIG_NO_CR := 1
 
 CONFIG_PEEK_SAVE_LINNUM := 1
 
@@ -31,11 +32,11 @@ STACK_TOP		:= $F8
 SPACE_FOR_GOSUB := $36
 CRLF_1 := CR
 CRLF_2 := $80
-WIDTH			:= 255
-WIDTH2			:= 255
+WIDTH			:= 0
+WIDTH2			:= 0
 
-; memory layout  $3000 - $CFFF is for your programs and heap
-RAMSTART2	:= $3000
+; memory layout  $2600 - $CFFF  is for your programs and heap
+RAMSTART2	:= $2600
 APPLE1 := 1
 
 .ifdef APPLE1

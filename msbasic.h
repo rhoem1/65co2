@@ -8,7 +8,6 @@ struct memoryInterceptMSBasic : romIntercept {
 
 #include "msbasic_code.h"
 
-
 	virtual unsigned char read(unsigned short address) {
 		return tmp_applesoft_bin[address - MSBASIC];
 	};

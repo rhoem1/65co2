@@ -292,11 +292,11 @@ int main(int argc, char *argv[])
 	apple->cpu->addInterceptRange(0xFFF8, 4, NULL);
 	apple->cpu->addInterceptRange(0xFFFE, 2, NULL);
 
-	// mix in IntBasic
-	apple->cpu->addInterceptRange(BASIC, BASIC_LENGTH, &BasicRom);
 
 	// reset the state
 	apple->cpu->reset_cpu();
+
+	bool loadRoms = true;
 
 	// file to load
 	char *filename = NULL;
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
 
 	// process command line
 	int c;
-	while ((c = getopt(argc, argv, "abdkmqsw")) != -1)
+	while ((c = getopt(argc, argv, "qabkmdsrw")) != -1)
 		switch (c)
 		{
 		case 'a':
@@ -316,22 +316,26 @@ int main(int argc, char *argv[])
 			apple->cpu->setPC(BASIC);
 			break;
 		case 'k':
-			// mix in Krusader
-			apple->cpu->addInterceptRange(KRUSADER, KRUSADER_LENGTH, &Krusader);
-			// set NMI to hop into Krusader's debugger
-			apple->cpu->write(0xFFFE, 0x19);
-			apple->cpu->write(0xFFFF, 0xFE);
 			apple->cpu->setPC(KRUSADER);
 			break;
 		case 'm':
 			// mix in MSBasic
 			apple->cpu->addInterceptRange(MSBASIC, MSBASIC_LENGTH, &MSBasic);
 			apple->cpu->setPC(MSBASIC);
+			apple->width40 = false;
+			break;
+		case 'w':
+			apple->width40 = false;
+			break;
+
+		case 'r':
+			loadRoms = false;
 			break;
 
 		case 'q':
 			apple->quiet = true;
 			break;
+
 		case 'd':
 			apple->debugging = true;
 			break;
@@ -339,21 +343,18 @@ int main(int argc, char *argv[])
 			apple->debugging = true;
 			apple->stepping = true;
 			break;
-		case 'w':
-			apple->width40 = false;
-			break;
 		case '?': // don't care about other args
-			printf("apple1 [-abkmqdsw] [loadfile]\n");
+			printf("apple1 [-abkmqds] [loadfile]\n");
 			printf("  -a install ApplesoftLite @ E000\n");
 			printf("  -b start Woz Basic\n");
 			printf("  -k install Krusader13 @ F000\n");
 			printf("  -m install MSBasic @ 400\n");
 			printf("  -q quiet until file loaded\n");
+			printf("  -w turn off 40 col mode\n");
 
 			printf("  -d turn on opcode trace\n");
 			printf("  -s turn on opcode trace in step mode\n");
 
-			printf("  -w turn off 40col width limitation\n");
 			printf(" ctrl-c to quit, f2 to reset, f12 to nmi\n");
 			exit(0);
 			break;
@@ -364,6 +365,17 @@ int main(int argc, char *argv[])
 	if (optind > 0)
 	{
 		filename = argv[optind];
+	}
+
+	if(loadRoms) {
+		// mix in IntBasic
+		apple->cpu->addInterceptRange(BASIC, BASIC_LENGTH, &BasicRom);
+
+		// mix in Krusader
+		apple->cpu->addInterceptRange(KRUSADER, KRUSADER_LENGTH, &Krusader);
+		// set NMI to hop into Krusader's debugger
+		apple->cpu->write(0xFFFE, 0x19);
+		apple->cpu->write(0xFFFF, 0xFE);
 	}
 
 	if (filename)
@@ -404,53 +416,61 @@ int main(int argc, char *argv[])
 	{
 		apple->cpu->printCpuStateHeader();
 		apple->cpu->dumpCpuState();
-	}
-
-	// the main loop
-	while (apple->running)
-	{
-		// run an op, get the cycles used
-		int cycles = apple->cpu->do_cycle();
-
-		// pass the cycles used to things that need to know
-		apple->cycleCounter->update(cycles);
-
-		// check the keyboard hardware
-		apple->checkKeyboard(false);
-
-		/*
-		if(cpu->r.PC == 0x300) {
-			cpu->debugging = true;
-			cpu->stepping = true;
-		}
-		*/
-
-		// TODO: improve the debugging capabilities beyond stepping
-		if (apple->debugging)
+		// the main loop
+		while (apple->running)
 		{
-			apple->cpu->dumpCpuState();
+			// run an op, get the cycles used
+			int cycles = apple->cpu->do_cycle();
 
-			//if(cpu->r.SR_BREAK)
-			//	cpu->stepping = true;
-			if (apple->stepping)
+			// pass the cycles used to things that need to know
+			apple->cycleCounter->update(cycles);
+
+			// check the keyboard hardware
+			apple->checkKeyboard(false);
+
+			// TODO: improve the debugging capabilities beyond stepping
+			if (apple->debugging)
 			{
-				char c = getchar();
-				switch (c)
+				apple->cpu->dumpCpuState();
+
+				//if(cpu->r.SR_BREAK)
+				//	cpu->stepping = true;
+				if (apple->stepping)
 				{
-				case ' ':
-					apple->stepping = false;
-					break;
-				case '?':
-					apple->cpu->printCpuStateHeader();
-					break;
-				case 'c':
-					apple->stepping = false;
-					apple->debugging = false;
-					break;
+					char c = getchar();
+					switch (c)
+					{
+					case ' ':
+						apple->stepping = false;
+						break;
+					case '?':
+						apple->cpu->printCpuStateHeader();
+						break;
+					case 'c':
+						apple->stepping = false;
+						apple->debugging = false;
+						break;
+					}
 				}
 			}
 		}
 	}
+	else
+	{
+		// the main loop
+		while (apple->running)
+		{
+			// run an op, get the cycles used
+			int cycles = apple->cpu->do_cycle();
+
+			// pass the cycles used to things that need to know
+			apple->cycleCounter->update(cycles);
+
+			// check the keyboard hardware
+			apple->checkKeyboard(false);
+		}
+	}
+
 
 	// all done? time to clean up
 
