@@ -23,9 +23,10 @@ include_directories(${SixtyFiveCeeOhTwo_SOURCE_DIR}/src)
 link_directories(${SixtyFiveCeeOhTwo_BINARY_DIR}/build)
 add_executable(apple1 src/main.cpp src/apple1stdio.cpp src/apple1.cpp src/Cpu/65co2.cpp)
 
+enable_testing()
 add_executable(testcpu src/testcpu.cpp src/Cpu/65co2.cpp)
 target_link_libraries(testcpu gtest_main)
-#include(googletest)
-#gtest_discover_tests(testcpu)
+include(GoogleTest)
+gtest_discover_tests(testcpu)
 
 

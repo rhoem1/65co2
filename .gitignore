@@ -1,5 +1,10 @@
 apple1
+testcpu
 *.o
 CMakeFiles
 _deps
 build
+*.cmake
+CMakeCache.txt
+Testing
+
