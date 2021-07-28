@@ -1,2 +1,5 @@
 apple1
 *.o
+CMakeFiles
+_deps
+build

@@ -1,0 +1,44 @@
+#!/usr/bin/php
+<?php
+
+$in_len = filesize($argv[1]);
+
+$first_blockaddr = -1;
+if($in_len > 0) {
+	if($fp = fopen($argv[1],"rb")) {
+    while(!feof($fp) && $in_len > 0) {
+      $col = 0;
+      $c = fread($fp,2);
+      $blockaddr = ord($c[1]) << 8 + ord($c[0]);
+      if($first_blockaddr < 0) {
+        $first_blockaddr = $blockaddr;
+      }
+
+
+      $c = fread($fp,2);
+      $blocksize = ord($c[1]) * 256 + ord($c[0]);
+
+
+      printf("%04X: ",$blockaddr);
+
+      $block = array_reverse(str_split(fread($fp, $blocksize)));
+      $in_len -= $blocksize + 4;
+      while(count($block)) {
+        if($col === 0) {
+          echo ': ';
+        }
+        echo strtoupper(bin2hex(array_pop($block)));
+        $col++;
+        if ($col < 8 && $blocksize > 0) {
+          echo ' ';
+        } else {
+          echo "\n";
+          $col = 0;
+        }
+      }
+      echo "\n";
+    }
+  }
+  fclose($fp);
+  printf("%XR\n", $first_blockaddr);
+}

@@ -29,9 +29,8 @@ struct memoryIntercept
 	virtual void write(uint8_t value, uint16_t address) {}
 };
 
-class SixtyFiveCeeOhTwo
+struct SixtyFiveCeeOhTwo
 {
-public:
 	SixtyFiveCeeOhTwo();
 
 	// read a byte from memory ignoring intercepts
@@ -132,7 +131,6 @@ public:
 	 */
 	void printCpuStateHeader();
 
-private:
 	// addressing modes
 	enum eADDRESSING
 	{
@@ -741,5 +739,6 @@ struct romIntercept : public memoryIntercept
 	{
 	}
 };
+
 
 #endif

@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 
 // cpu emulation
-#include "65co2.h"
+#include "Cpu/65co2.h"
 
 /**
  * Apple One Emulation
@@ -22,7 +22,7 @@
  */
 struct AppleOne
 {
-    SixtyFiveCeeOhTwo *cpu;
+		SixtyFiveCeeOhTwo *cpu;
     bool running = true;
 
     /**
@@ -215,45 +215,9 @@ struct AppleOne
     memoryInterceptCycleCount *cycleCounter;
     memoryInterceptRNG *miRNG;
 
-    AppleOne()
-    {
-        cpu = new SixtyFiveCeeOhTwo();
-        ioPages = new romIntercept(cpu);
+    AppleOne();
 
-        piaKB = new memoryInterceptPIAKB(this);
-        piaKBcr = new memoryInterceptPIAKBcr(this);
-        piaDSP = new memoryInterceptPIADSP(this);
-        piaDSPcr = new memoryInterceptPIADSPcr(this);
-
-        stopEmulation = new memoryInterceptStopEmulation(this);
-        cycleCounter = new memoryInterceptCycleCount(this);
-        miRNG = new memoryInterceptRNG(this);
-
-        cpu->addInterceptRange(0xD000, 0x1000, ioPages);
-
-        // wire up pia intercepts
-        cpu->addIntercept(0xD010, piaKB);
-        cpu->addIntercept(0xD011, piaKBcr);
-        cpu->addIntercept(0xD012, piaDSP);
-        cpu->addIntercept(0xD013, piaDSPcr);
-
-        cpu->addIntercept(0xCFFF, miRNG);
-
-        cpu->addIntercept(0xD01F, stopEmulation);
-    }
-
-    ~AppleOne()
-    {
-        delete miRNG;
-        delete cycleCounter;
-        delete stopEmulation;
-        delete piaDSPcr;
-        delete piaDSP;
-        delete piaKBcr;
-        delete piaKB;
-        delete ioPages;
-        delete cpu;
-    }
+    ~AppleOne();
 
     virtual void outputDsp(unsigned char value) = 0;
     virtual void checkKeyboard(bool reading) = 0;

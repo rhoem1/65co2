@@ -9,12 +9,12 @@ DASM=/opt/dasm/bin/dasm
 EXE=
 
 
-OBJS= apple1.o 65co2.o
+OBJS= build/apple1.o build/65co2.o
 
 all: apple1
 
 %.bin: %.asm
-	$(DASM) $< -o$@ -f3 -s$*.sym
+	$(DASM) $< -o$@ -s$*.sym
 
 %.mon: %.bin 
 	bintomon -l 8192 $< > $*.mon
@@ -22,29 +22,29 @@ all: apple1
 apple1: $(OBJS)
 	$(CC) $(CPPFLAGS) -o $@ $^ $(LDFLAGS) 
 
-wozmon.bin: wozmon.s
+asm/wozmon.bin: asm/wozmon.s
 	$(DASM) $< -o$@ -f3
 
-wozmon_code.h: wozmon.bin
-	php import_bin wozmon.bin WOZMON monitor > wozmon_code.h
+src/wozmon_code.h: asm/wozmon.bin
+	php import_bin asm/wozmon.bin WOZMON monitor > src/wozmon_code.h
 
-intout.bin: asm/intout.s
+asm/intout.bin: asm/intout.s
 	$(DASM) $< -o$@ -f3
 
 # depends
-apple1.o:apple1.cpp apple1.h 65co2.h apple1basic.h applesoft_lite_0_4.h msbasic.h msbasic_code.h wozmon_code.h wozmon.h
+build/apple1.o:src/apple1.cpp src/apple1.h src/65co2.h src/apple1basic.h src/applesoft_lite_0_4.h src/msbasic.h src/msbasic_code.h src/wozmon_code.h src/wozmon.h
 	$(CC) $(CPPFLAGS) -o $@ -c $<
 
-65co2.o:65co2.cpp 65co2.h
+build/65co2.o:src/65co2.cpp src/65co2.h
 	$(CC) $(CPPFLAGS) -o $@ -c $<
 
-msbasic_code.h:msbasic/tmp/applesoft.bin
-	php import_bin msbasic/tmp/applesoft.bin MSBASIC tmp_applesoft_bin > msbasic_code.h
+src/msbasic_code.h:msbasic/tmp/applesoft.bin
+	php import_bin msbasic/tmp/applesoft.bin MSBASIC tmp_applesoft_bin > src/msbasic_code.h
 
 msbasic/tmp/applesoft.bin:msbasic/*.s
 	/opt/cc65/bin/ca65 -D applesoft msbasic/msbasic.s -o msbasic/tmp/applesoft.o -l msbasic/tmp/applesoft.lst
 	/opt/cc65/bin/ld65 -C msbasic/applesoft.cfg msbasic/tmp/applesoft.o -o msbasic/tmp/applesoft.bin -Ln msbasic/tmp/applesoft.lbl
 
 clean: 
-	rm -f $(OBJS) *.bin apple1
+	rm -f $(OBJS) asm/wozmon.bin msbasic/tmp/applesoft.bin apple1
 
