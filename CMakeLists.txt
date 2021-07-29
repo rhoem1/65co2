@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(SixtyFiveCeeOhTwo VERSION 1.0)
 
+set(CMAKE_BUILD_TYPE Debug)
 
 # GoogleTest requires at least C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -21,10 +22,22 @@ FetchContent_MakeAvailable(googletest)
 
 include_directories(${SixtyFiveCeeOhTwo_SOURCE_DIR}/src)
 link_directories(${SixtyFiveCeeOhTwo_BINARY_DIR}/build)
-add_executable(apple1 src/main.cpp src/apple1stdio.cpp src/apple1.cpp src/Cpu/65co2.cpp)
+add_executable(
+  apple1 
+    src/main.cpp 
+    src/apple1stdio.cpp 
+    src/apple1.cpp 
+    src/Cpu/65co2.cpp
+)
 
 enable_testing()
-add_executable(testcpu src/testcpu.cpp src/Cpu/65co2.cpp)
+add_executable(
+  testcpu 
+  src/testcpu.cpp 
+  src/Cpu/65co2.cpp 
+  src/Tests/LDA.cpp
+  src/Tests/LDX.cpp
+)
 target_link_libraries(testcpu gtest_main)
 include(GoogleTest)
 gtest_discover_tests(testcpu)

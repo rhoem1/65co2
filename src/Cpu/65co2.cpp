@@ -47,6 +47,11 @@ void SixtyFiveCeeOhTwo::addInterceptRange(uint16_t start, uint16_t len, memoryIn
 
 SixtyFiveCeeOhTwo::SixtyFiveCeeOhTwo()
 {
+  init_memory();
+}
+
+void SixtyFiveCeeOhTwo::init_memory()
+{
 	memset(memory, 0, 65536);
 	memset(intercepts, 0, sizeof(memoryIntercept *) * 65536);
 }
