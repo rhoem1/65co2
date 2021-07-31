@@ -2,11 +2,11 @@
 #include "Cpu/65co2.h"
 #include "testcpu.h"
 
-TEST_F(CpuTest, LDXImmediate)
+TEST_F(CpuTest, LDYImmediate)
 {
-  uint8_t val = randomByte();
   uint16_t addr = 0x200;
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDX_IM);
+  uint8_t val = randomByte();
+  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_IM);
   addr++;
   cpu.write(addr, val);
   addr++;
@@ -35,18 +35,18 @@ TEST_F(CpuTest, LDXImmediate)
 	// registers
 	EXPECT_EQ(cpu.r.SP, 0xFD);
 	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, val);
-	EXPECT_EQ(cpu.r.Y, 0);
-	EXPECT_EQ(cpu.r.PC, addr);
+	EXPECT_EQ(cpu.r.X, 0);
+	EXPECT_EQ(cpu.r.Y, val);
+  EXPECT_EQ(cpu.r.PC, addr);
   
 }
 
-TEST_F(CpuTest, LDXZeroPage)
+TEST_F(CpuTest, LDYZeroPage)
 {
   uint16_t addr = 0x200;
   uint8_t val = randomByte();
   uint8_t zp = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDX_ZP);
+  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ZP);
   addr++;
   cpu.write(addr, zp);
   addr++;
@@ -76,25 +76,25 @@ TEST_F(CpuTest, LDXZeroPage)
 	// registers
 	EXPECT_EQ(cpu.r.SP, 0xFD);
 	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, val);
-	EXPECT_EQ(cpu.r.Y, 0);
-	EXPECT_EQ(cpu.r.PC, addr);
+	EXPECT_EQ(cpu.r.X, 0);
+	EXPECT_EQ(cpu.r.Y, val);
+  EXPECT_EQ(cpu.r.PC, addr);
   
 }
 
-TEST_F(CpuTest, LDXZeroPageY)
+TEST_F(CpuTest, LDYZeroPageX)
 {
   uint16_t addr = 0x200;
   uint8_t val = randomByte();
   uint8_t zp = randomByte();
-  uint8_t y = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDX_ZPY);
+  uint8_t x = randomByte();
+  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ZPX);
   addr++;
   cpu.write(addr, zp);
   addr++;
-  cpu.write((zp + y) & 0xFF, val);
+  cpu.write((zp + x) & 0xFF, val);
   
-  cpu.r.Y = y;
+  cpu.r.X = x;
   
   uint64_t cycles = cpu.do_cycle();
   
@@ -120,18 +120,18 @@ TEST_F(CpuTest, LDXZeroPageY)
 	// registers
 	EXPECT_EQ(cpu.r.SP, 0xFD);
 	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, val);
-	EXPECT_EQ(cpu.r.Y, y);
-	EXPECT_EQ(cpu.r.PC, addr);
+	EXPECT_EQ(cpu.r.X, x);
+	EXPECT_EQ(cpu.r.Y, val);
+  EXPECT_EQ(cpu.r.PC, addr);
   
 }
 
-TEST_F(CpuTest, LDXAbsolute)
+TEST_F(CpuTest, LDYAbsolute)
 {
   uint16_t addr = 0x200;
   uint8_t val = randomByte();
   uint8_t zp = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDX_ABS);
+  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ABS);
   addr++;
   cpu.write(addr, zp);
   addr++;
@@ -163,32 +163,29 @@ TEST_F(CpuTest, LDXAbsolute)
 	// registers
 	EXPECT_EQ(cpu.r.SP, 0xFD);
 	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, val);
-	EXPECT_EQ(cpu.r.Y, 0);
-	EXPECT_EQ(cpu.r.PC, addr);
+	EXPECT_EQ(cpu.r.X, 0);
+	EXPECT_EQ(cpu.r.Y, val);
+  EXPECT_EQ(cpu.r.PC, addr);
   
 }
 
-TEST_F(CpuTest, LDXAbsoluteY)
+TEST_F(CpuTest, LDYAbsoluteX)
 {
   uint16_t addr = 0x200;
   uint8_t val = randomByte();
-  uint8_t y = 0xFF; //randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDX_ABSY);
+  uint8_t x = randomByte();
+  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ABSX);
+  addr++;
+  cpu.write(addr, 0x00);
   addr++;
   cpu.write(addr, 0x80);
   addr++;
-  cpu.write(addr, 0x80);
-  addr++;
-  cpu.write(0x8080 + y, val);
+  cpu.write(0x8000 + x, val);
   
-  cpu.r.Y = y;
+  cpu.r.X = x;
 
   uint64_t cycles = cpu.do_cycle();
   
-  if(y > 0x7F)
-  EXPECT_EQ(cycles, 5);
-  else
   EXPECT_EQ(cycles, 4);
 
   if(val > 127)
@@ -211,8 +208,8 @@ TEST_F(CpuTest, LDXAbsoluteY)
 	// registers
 	EXPECT_EQ(cpu.r.SP, 0xFD);
 	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, val);
-	EXPECT_EQ(cpu.r.Y, y);
-	EXPECT_EQ(cpu.r.PC, addr);
+	EXPECT_EQ(cpu.r.X, x);
+	EXPECT_EQ(cpu.r.Y, val);
+  EXPECT_EQ(cpu.r.PC, addr);
   
 }

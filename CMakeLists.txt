@@ -35,8 +35,12 @@ add_executable(
   testcpu 
   src/testcpu.cpp 
   src/Cpu/65co2.cpp 
-  src/Tests/LDA.cpp
   src/Tests/LDX.cpp
+  src/Tests/LDY.cpp
+  src/Tests/LDA.cpp
+  src/Tests/STX.cpp
+  src/Tests/STY.cpp
+  src/Tests/STA.cpp
 )
 target_link_libraries(testcpu gtest_main)
 include(GoogleTest)
