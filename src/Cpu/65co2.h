@@ -194,6 +194,24 @@ struct SixtyFiveCeeOhTwo
     OP_BB6,
     OP_BB7,
     
+    OP_SB0, // Set Bit
+    OP_SB1,
+    OP_SB2,
+    OP_SB3,
+    OP_SB4,
+    OP_SB5,
+    OP_SB6,
+    OP_SB7,
+
+    OP_RB0, // Reset Bit
+    OP_RB1,
+    OP_RB2,
+    OP_RB3,
+    OP_RB4,
+    OP_RB5,
+    OP_RB6,
+    OP_RB7,
+
 		OP_CLC, // clear carry
 		OP_CLD, // clear decimal
 		OP_CLI, // clear interrupt disable
@@ -339,7 +357,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_TSB, &SixtyFiveCeeOhTwo::TSB, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x04
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x05
 		OPCODE(OP_ASL, &SixtyFiveCeeOhTwo::ASL, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x06
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x07
+		OPCODE(OP_RB0, &SixtyFiveCeeOhTwo::RB0, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x07
 		OPCODE(OP_PHP, &SixtyFiveCeeOhTwo::PHP, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0x08
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0x09
 		OPCODE(OP_ASL, &SixtyFiveCeeOhTwo::ASL, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x0A
@@ -355,7 +373,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_TRB, &SixtyFiveCeeOhTwo::TRB, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x14
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x15
 		OPCODE(OP_ASL, &SixtyFiveCeeOhTwo::ASL, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0x16
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x17
+		OPCODE(OP_RB1, &SixtyFiveCeeOhTwo::RB1, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x17
 		OPCODE(OP_CLC, &SixtyFiveCeeOhTwo::CLC, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x18
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0x19
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x1A
@@ -371,7 +389,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BIT, &SixtyFiveCeeOhTwo::BIT, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x24
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x25
 		OPCODE(OP_ROL, &SixtyFiveCeeOhTwo::ROL, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x26
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x27
+		OPCODE(OP_RB2, &SixtyFiveCeeOhTwo::RB2, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x27
 		OPCODE(OP_PLP, &SixtyFiveCeeOhTwo::PLP, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 4, 0), // 0x28
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0x29
 		OPCODE(OP_ROL, &SixtyFiveCeeOhTwo::ROL, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x2A
@@ -387,7 +405,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BIT, &SixtyFiveCeeOhTwo::BIT, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x34
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x35
 		OPCODE(OP_ROL, &SixtyFiveCeeOhTwo::ROL, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0x36
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x37
+		OPCODE(OP_RB3, &SixtyFiveCeeOhTwo::RB3, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x37
 		OPCODE(OP_SEC, &SixtyFiveCeeOhTwo::SEC, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x38
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0x39
 		OPCODE(OP_INC, &SixtyFiveCeeOhTwo::INC, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x3A
@@ -403,7 +421,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x44
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x45
 		OPCODE(OP_LSR, &SixtyFiveCeeOhTwo::LSR, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x46
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x47
+		OPCODE(OP_RB4, &SixtyFiveCeeOhTwo::RB4, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x47
 		OPCODE(OP_PHA, &SixtyFiveCeeOhTwo::PHA, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0x48
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0x49
 		OPCODE(OP_LSR, &SixtyFiveCeeOhTwo::LSR, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x4A
@@ -419,7 +437,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x54
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x55
 		OPCODE(OP_LSR, &SixtyFiveCeeOhTwo::LSR, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0x56
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x57
+		OPCODE(OP_RB5, &SixtyFiveCeeOhTwo::RB5, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x57
 		OPCODE(OP_CLI, &SixtyFiveCeeOhTwo::CLI, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x58
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0x59
 		OPCODE(OP_PHY, &SixtyFiveCeeOhTwo::PHY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0x5A
@@ -435,7 +453,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 1), // 0x64
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x65
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x66
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x67
+		OPCODE(OP_RB6, &SixtyFiveCeeOhTwo::RB6, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x67
 		OPCODE(OP_PLA, &SixtyFiveCeeOhTwo::PLA, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 4, 1), // 0x68
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0x69
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ACC, &SixtyFiveCeeOhTwo::A_ACC, 0, 2, 0), // 0x6A
@@ -451,7 +469,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 1), // 0x74
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x75
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0x76
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x77
+		OPCODE(OP_RB7, &SixtyFiveCeeOhTwo::RB7, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x77
 		OPCODE(OP_SEI, &SixtyFiveCeeOhTwo::SEI, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x78
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0x79
 		OPCODE(OP_PLY, &SixtyFiveCeeOhTwo::PLY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 4, 0), // 0x7A
@@ -467,7 +485,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STY, &SixtyFiveCeeOhTwo::STY, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 1), // 0x84
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 1), // 0x85
 		OPCODE(OP_STX, &SixtyFiveCeeOhTwo::STX, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 1), // 0x86
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x87
+		OPCODE(OP_SB0, &SixtyFiveCeeOhTwo::SB0, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x87
 		OPCODE(OP_DEY, &SixtyFiveCeeOhTwo::DEY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x88
 		OPCODE(OP_BIT, &SixtyFiveCeeOhTwo::BIT, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0x89
 		OPCODE(OP_TXA, &SixtyFiveCeeOhTwo::TXA, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x8A
@@ -483,7 +501,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STY, &SixtyFiveCeeOhTwo::STY, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 1), // 0x94
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 1), // 0x95
 		OPCODE(OP_STX, &SixtyFiveCeeOhTwo::STX, ADR_ZPY, &SixtyFiveCeeOhTwo::A_ZPY, 1, 4, 1), // 0x96
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x97
+		OPCODE(OP_SB1, &SixtyFiveCeeOhTwo::SB1, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x97
 		OPCODE(OP_TYA, &SixtyFiveCeeOhTwo::TYA, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x98
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 5, 1), // 0x99
 		OPCODE(OP_TXS, &SixtyFiveCeeOhTwo::TXS, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x9A
@@ -499,7 +517,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_LDY, &SixtyFiveCeeOhTwo::LDY, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xA4
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xA5
 		OPCODE(OP_LDX, &SixtyFiveCeeOhTwo::LDX, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xA6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xA7
+		OPCODE(OP_SB2, &SixtyFiveCeeOhTwo::SB2, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xA7
 		OPCODE(OP_TAY, &SixtyFiveCeeOhTwo::TAY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xA8
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xA9
 		OPCODE(OP_TAX, &SixtyFiveCeeOhTwo::TAX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xAA
@@ -515,7 +533,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_LDY, &SixtyFiveCeeOhTwo::LDY, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0xB4
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0xB5
 		OPCODE(OP_LDX, &SixtyFiveCeeOhTwo::LDX, ADR_ZPY, &SixtyFiveCeeOhTwo::A_ZPY, 1, 4, 0), // 0xB6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xB7
+		OPCODE(OP_SB3, &SixtyFiveCeeOhTwo::SB3, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xB7
 		OPCODE(OP_CLV, &SixtyFiveCeeOhTwo::CLV, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xB8
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0xB9
 		OPCODE(OP_TSX, &SixtyFiveCeeOhTwo::TSX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xBA
@@ -531,7 +549,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_CPY, &SixtyFiveCeeOhTwo::CPY, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xC4
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xC5
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xC6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xC7
+		OPCODE(OP_SB4, &SixtyFiveCeeOhTwo::SB4, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xC7
 		OPCODE(OP_INY, &SixtyFiveCeeOhTwo::INY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xC8
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xC9
 		OPCODE(OP_DEX, &SixtyFiveCeeOhTwo::DEX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xCA
@@ -547,7 +565,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xD4
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0xD5
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0xD6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xD7
+		OPCODE(OP_SB5, &SixtyFiveCeeOhTwo::SB5, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xD7
 		OPCODE(OP_CLD, &SixtyFiveCeeOhTwo::CLD, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xD8
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0xD9
 		OPCODE(OP_PHX, &SixtyFiveCeeOhTwo::PHX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0xDA
@@ -563,7 +581,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_CPX, &SixtyFiveCeeOhTwo::CPX, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xE4
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0xE5
 		OPCODE(OP_INC, &SixtyFiveCeeOhTwo::INC, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xE6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xE7
+		OPCODE(OP_SB6, &SixtyFiveCeeOhTwo::SB6, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xE7
 		OPCODE(OP_INX, &SixtyFiveCeeOhTwo::INX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xE8
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xE9
 		OPCODE(OP_NOP, &SixtyFiveCeeOhTwo::NOP, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xEA
@@ -579,7 +597,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xF4
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0xF5
 		OPCODE(OP_INC, &SixtyFiveCeeOhTwo::INC, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0xF6
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xF7
+		OPCODE(OP_SB7, &SixtyFiveCeeOhTwo::SB7, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0xF7
 		OPCODE(OP_SED, &SixtyFiveCeeOhTwo::SED, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xF8
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0xF9
 		OPCODE(OP_PLX, &SixtyFiveCeeOhTwo::PLX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 4, 0), // 0xFA
@@ -695,6 +713,7 @@ struct SixtyFiveCeeOhTwo
 	uint8_t BR5();
 	uint8_t BR6();
 	uint8_t BR7();
+  uint8_t BBR(uint8_t bit);
 
 	uint8_t BB0();
 	uint8_t BB1();
@@ -704,9 +723,27 @@ struct SixtyFiveCeeOhTwo
 	uint8_t BB5();
 	uint8_t BB6();
 	uint8_t BB7();
-
-  uint8_t BBR(uint8_t bit);
   uint8_t BBS(uint8_t bit);
+  
+  uint8_t RB0();
+  uint8_t RB1();
+  uint8_t RB2();
+  uint8_t RB3();
+  uint8_t RB4();
+  uint8_t RB5();
+  uint8_t RB6();
+  uint8_t RB7();
+  uint8_t RMB(uint8_t bit);
+
+  uint8_t SB0();
+  uint8_t SB1();
+  uint8_t SB2();
+  uint8_t SB3();
+  uint8_t SB4();
+  uint8_t SB5();
+  uint8_t SB6();
+  uint8_t SB7();
+  uint8_t SMB(uint8_t bit);
 
 	uint8_t BEQ();
 	uint8_t BIT();
@@ -937,6 +974,23 @@ struct SixtyFiveCeeOhTwo
       INS_BBS5 = 0xDF,
       INS_BBS6 = 0xEF,
       INS_BBS7 = 0xFF,
+      
+      INS_RB0 = 0x07,
+      INS_RB1 = 0x17,
+      INS_RB2 = 0x27,
+      INS_RB3 = 0x37,
+      INS_RB4 = 0x47,
+      INS_RB5 = 0x57,
+      INS_RB6 = 0x67,
+      INS_RB7 = 0x77,
+      INS_SB0 = 0x87,
+      INS_SB1 = 0x97,
+      INS_SB2 = 0xA7,
+      INS_SB3 = 0xB7,
+      INS_SB4 = 0xC7,
+      INS_SB5 = 0xD7,
+      INS_SB6 = 0xE7,
+      INS_SB7 = 0xF7,
 
       //status flag changes
       INS_CLC = 0x18,

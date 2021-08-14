@@ -189,3 +189,179 @@ TEST_F(CpuTest, INS_TRB_ABS)
   expectRegisters(A, 0, 0, 0xFD);
   expectPC();
 }
+
+TEST_F(CpuTest, INS_SB0)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB0, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x01);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB1)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB1, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x02);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB2)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB2, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x04);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB3)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB3, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x08);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB4)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB4, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x10);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB5)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB5, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x20);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB6)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB6, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x40);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_SB7)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_SB7, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val | 0x80);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB0)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB0, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x01);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB1)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB1, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x02);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB2)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB2, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x04);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB3)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB3, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x08);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB4)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB4, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x10);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB5)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB5, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x20);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB6)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB6, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x40);
+  expectRegisters(0, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_RB7)
+{
+  val = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, val);
+  code(SixtyFiveCeeOhTwo::INS_RB7, zeroPageAddress);
+  executeCycles(5);
+  expectAddressEquals(zeroPageAddress, val & ~0x80);
+  expectRegisters(0, 0, 0, 0xFD);
+}

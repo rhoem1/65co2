@@ -16,12 +16,14 @@ const char sMODES[15][6] = {
 	"REL  "};
 
 // name
-const char nmem[81][4] = {
+const char nmem[97][4] = {
 	"BAD",
 	"ADC", "AND", "ASL",
 	"BCC", "BCS", "BEQ", "BIT", "BMI", "BNE", "BPL", "BRA", "BRK", "BVC", "BVS",
   "BB0", "BB1", "BB2", "BB3", "BB4", "BB5", "BB6", "BB7",
   "BR0", "BR1", "BR2", "BR3", "BR4", "BR5", "BR6", "BR7",
+  "SB0", "SB1", "SB2", "SB3", "SB4", "SB5", "SB6", "SB7",
+  "RB0", "RB1", "RB2", "RB3", "RB4", "RB5", "RB6", "RB7",
 	"CLC", "CLD", "CLI", "CLV", "CMP", "CPX", "CPY",
 	"DEC", "DEX", "DEY",
 	"EOR",
@@ -1052,6 +1054,20 @@ uint8_t SixtyFiveCeeOhTwo::BBS(uint8_t bit)
 	return 0;
 }
 
+uint8_t SixtyFiveCeeOhTwo::RMB(uint8_t bit)
+{
+  alu &= ~bit;
+  writeOK = true;
+	return 0;
+}
+
+uint8_t SixtyFiveCeeOhTwo::SMB(uint8_t bit)
+{
+  alu |= bit;
+  writeOK = true;
+	return 0;
+}
+
 uint8_t SixtyFiveCeeOhTwo::BR0()
 {
   return BBR(0x01);
@@ -1130,4 +1146,84 @@ uint8_t SixtyFiveCeeOhTwo::BB6()
 uint8_t SixtyFiveCeeOhTwo::BB7()
 {
   return BBS(0x80);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB0()
+{
+  return RMB(0x01);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB1()
+{
+  return RMB(0x02);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB2()
+{
+  return RMB(0x04);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB3()
+{
+  return RMB(0x08);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB4()
+{
+  return RMB(0x10);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB5()
+{
+  return RMB(0x20);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB6()
+{
+  return RMB(0x40);
+}
+
+uint8_t SixtyFiveCeeOhTwo::RB7()
+{
+  return RMB(0x80);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB0()
+{
+  return SMB(0x01);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB1()
+{
+  return SMB(0x02);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB2()
+{
+  return SMB(0x04);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB3()
+{
+  return SMB(0x08);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB4()
+{
+  return SMB(0x10);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB5()
+{
+  return SMB(0x20);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB6()
+{
+  return SMB(0x40);
+}
+
+uint8_t SixtyFiveCeeOhTwo::SB7()
+{
+  return SMB(0x80);
 }

@@ -131,7 +131,7 @@ TEST_F(CpuTest, INS_BRA)
 }
 
 
-TEST_F(CpuTest, INS_BS0)
+TEST_F(CpuTest, INS_BBS0)
 {
   val = randomByte();
   addr = randomByte();
@@ -142,7 +142,7 @@ TEST_F(CpuTest, INS_BS0)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS1)
+TEST_F(CpuTest, INS_BSB1)
 {
   val = randomByte();
   addr = randomByte();
@@ -153,7 +153,7 @@ TEST_F(CpuTest, INS_BS1)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS2)
+TEST_F(CpuTest, INS_BBS2)
 {
   val = randomByte();
   addr = randomByte();
@@ -164,7 +164,7 @@ TEST_F(CpuTest, INS_BS2)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS3)
+TEST_F(CpuTest, INS_BBS3)
 {
   val = randomByte();
   addr = randomByte();
@@ -175,7 +175,7 @@ TEST_F(CpuTest, INS_BS3)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS4)
+TEST_F(CpuTest, INS_BBS4)
 {
   val = randomByte();
   addr = randomByte();
@@ -186,7 +186,7 @@ TEST_F(CpuTest, INS_BS4)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS5)
+TEST_F(CpuTest, INS_BBS5)
 {
   val = randomByte();
   addr = randomByte();
@@ -197,7 +197,7 @@ TEST_F(CpuTest, INS_BS5)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS6)
+TEST_F(CpuTest, INS_BBS6)
 {
   val = randomByte();
   addr = randomByte();
@@ -208,7 +208,7 @@ TEST_F(CpuTest, INS_BS6)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BS7)
+TEST_F(CpuTest, INS_BBS7)
 {
   val = randomByte();
   addr = randomByte();
@@ -219,7 +219,7 @@ TEST_F(CpuTest, INS_BS7)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR0)
+TEST_F(CpuTest, INS_BBR0)
 {
   val = randomByte();
   addr = randomByte();
@@ -230,7 +230,7 @@ TEST_F(CpuTest, INS_BR0)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR1)
+TEST_F(CpuTest, INS_BBR1)
 {
   val = randomByte();
   addr = randomByte();
@@ -241,7 +241,7 @@ TEST_F(CpuTest, INS_BR1)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR2)
+TEST_F(CpuTest, INS_BBR2)
 {
   val = randomByte();
   addr = randomByte();
@@ -252,7 +252,7 @@ TEST_F(CpuTest, INS_BR2)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR3)
+TEST_F(CpuTest, INS_BBR3)
 {
   val = randomByte();
   addr = randomByte();
@@ -263,7 +263,7 @@ TEST_F(CpuTest, INS_BR3)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR4)
+TEST_F(CpuTest, INS_BBR4)
 {
   val = randomByte();
   addr = randomByte();
@@ -274,7 +274,7 @@ TEST_F(CpuTest, INS_BR4)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR5)
+TEST_F(CpuTest, INS_BBR5)
 {
   val = randomByte();
   addr = randomByte();
@@ -285,7 +285,7 @@ TEST_F(CpuTest, INS_BR5)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR6)
+TEST_F(CpuTest, INS_BBR6)
 {
   val = randomByte();
   addr = randomByte();
@@ -296,7 +296,7 @@ TEST_F(CpuTest, INS_BR6)
   expectRegisters(0, 0, 0, 0xFD);
 }
 
-TEST_F(CpuTest, INS_BR7)
+TEST_F(CpuTest, INS_BBR7)
 {
   val = randomByte();
   addr = randomByte();
