@@ -175,6 +175,25 @@ struct SixtyFiveCeeOhTwo
 		OP_BRK, // interrupt
 		OP_BVC, // branch on overflow clear
 		OP_BVS, // branch on overflow set
+
+    OP_BR0, // branch on bit clear 0
+    OP_BR1,
+    OP_BR2,
+    OP_BR3,
+    OP_BR4,
+    OP_BR5,
+    OP_BR6,
+    OP_BR7,
+
+    OP_BB0, // branch on bit set 0
+    OP_BB1,
+    OP_BB2,
+    OP_BB3,
+    OP_BB4,
+    OP_BB5,
+    OP_BB6,
+    OP_BB7,
+    
 		OP_CLC, // clear carry
 		OP_CLD, // clear decimal
 		OP_CLI, // clear interrupt disable
@@ -328,7 +347,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_TSB, &SixtyFiveCeeOhTwo::TSB, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x0C
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x0D
 		OPCODE(OP_ASL, &SixtyFiveCeeOhTwo::ASL, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x0E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x0F
+		OPCODE(OP_BR0, &SixtyFiveCeeOhTwo::BR0, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x0F
 		OPCODE(OP_BPL, &SixtyFiveCeeOhTwo::BPL, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0x10
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0x11
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0x12
@@ -344,7 +363,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_TRB, &SixtyFiveCeeOhTwo::TRB, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x1C
 		OPCODE(OP_ORA, &SixtyFiveCeeOhTwo::ORA, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0x1D
 		OPCODE(OP_ASL, &SixtyFiveCeeOhTwo::ASL, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 6, 0), // 0x1E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x1F
+		OPCODE(OP_BR1, &SixtyFiveCeeOhTwo::BR1, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x1F
 		OPCODE(OP_JSR, &SixtyFiveCeeOhTwo::JSR, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x20
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0x21
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x22
@@ -360,7 +379,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BIT, &SixtyFiveCeeOhTwo::BIT, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x2C
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x2D
 		OPCODE(OP_ROL, &SixtyFiveCeeOhTwo::ROL, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x2E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x2F
+		OPCODE(OP_BR2, &SixtyFiveCeeOhTwo::BR2, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x2F
 		OPCODE(OP_BMI, &SixtyFiveCeeOhTwo::BMI, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0x30
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0x31
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0x32
@@ -376,7 +395,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BIT, &SixtyFiveCeeOhTwo::BIT, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0x3C
 		OPCODE(OP_AND, &SixtyFiveCeeOhTwo::AND, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0x3D
 		OPCODE(OP_ROL, &SixtyFiveCeeOhTwo::ROL, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 6, 0), // 0x3E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x3F
+		OPCODE(OP_BR3, &SixtyFiveCeeOhTwo::BR3, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x3F
 		OPCODE(OP_RTI, &SixtyFiveCeeOhTwo::RTI, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 6, 0), // 0x40
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0x41
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x42
@@ -392,7 +411,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_JMP, &SixtyFiveCeeOhTwo::JMP, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 3, 0), // 0x4C
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x4D
 		OPCODE(OP_LSR, &SixtyFiveCeeOhTwo::LSR, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x4E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x4F
+		OPCODE(OP_BR4, &SixtyFiveCeeOhTwo::BR4, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x4F
 		OPCODE(OP_BVC, &SixtyFiveCeeOhTwo::BVC, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0x50
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0x51
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0x52
@@ -408,12 +427,12 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x5C
 		OPCODE(OP_EOR, &SixtyFiveCeeOhTwo::EOR, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0x5D
 		OPCODE(OP_LSR, &SixtyFiveCeeOhTwo::LSR, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 6, 0), // 0x5E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x5F
+		OPCODE(OP_BR5, &SixtyFiveCeeOhTwo::BR5, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x5F
 		OPCODE(OP_RTS, &SixtyFiveCeeOhTwo::RTS, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 6, 0), // 0x60
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0x61
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x62
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x63
-		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x64
+		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 1), // 0x64
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 3, 0), // 0x65
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 1, 5, 0), // 0x66
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x67
@@ -424,12 +443,12 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_JMP, &SixtyFiveCeeOhTwo::JMP, ADR_IND, &SixtyFiveCeeOhTwo::A_IND, 2, 5, 0), // 0x6C
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x6D
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0x6E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x6F
+		OPCODE(OP_BR6, &SixtyFiveCeeOhTwo::BR6, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x6F
 		OPCODE(OP_BVS, &SixtyFiveCeeOhTwo::BVS, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0x70
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0x71
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0x72
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x73
-		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x74
+		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 1), // 0x74
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 4, 0), // 0x75
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ZPX, &SixtyFiveCeeOhTwo::A_ZPX, 1, 6, 0), // 0x76
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x77
@@ -440,7 +459,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_JMP, &SixtyFiveCeeOhTwo::JMP, ADR_AIX, &SixtyFiveCeeOhTwo::A_AIX, 2, 6, 0), // 0x7C
 		OPCODE(OP_ADC, &SixtyFiveCeeOhTwo::ADC, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0x7D
 		OPCODE(OP_ROR, &SixtyFiveCeeOhTwo::ROR, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 6, 0), // 0x7E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x7F
+		OPCODE(OP_BR7, &SixtyFiveCeeOhTwo::BR7, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x7F
 		OPCODE(OP_BRA, &SixtyFiveCeeOhTwo::BRA, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 3, 0), // 0x80
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 1), // 0x81
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x82
@@ -456,7 +475,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STY, &SixtyFiveCeeOhTwo::STY, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 1), // 0x8C
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 1), // 0x8D
 		OPCODE(OP_STX, &SixtyFiveCeeOhTwo::STX, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 1), // 0x8E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x8F
+		OPCODE(OP_BB0, &SixtyFiveCeeOhTwo::BB0, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x8F
 		OPCODE(OP_BCC, &SixtyFiveCeeOhTwo::BCC, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0x90
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 6, 1), // 0x91
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 1), // 0x92
@@ -469,10 +488,10 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 5, 1), // 0x99
 		OPCODE(OP_TXS, &SixtyFiveCeeOhTwo::TXS, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0x9A
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x9B
-		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0x9C
+		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 1), // 0x9C
 		OPCODE(OP_STA, &SixtyFiveCeeOhTwo::STA, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 5, 1), // 0x9D
-		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 5, 0), // 0x9E
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0x9F
+		OPCODE(OP_STZ, &SixtyFiveCeeOhTwo::STZ, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 5, 1), // 0x9E
+		OPCODE(OP_BB1, &SixtyFiveCeeOhTwo::BB1, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0x9F
 		OPCODE(OP_LDY, &SixtyFiveCeeOhTwo::LDY, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xA0
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0xA1
 		OPCODE(OP_LDX, &SixtyFiveCeeOhTwo::LDX, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xA2
@@ -488,7 +507,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_LDY, &SixtyFiveCeeOhTwo::LDY, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xAC
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xAD
 		OPCODE(OP_LDX, &SixtyFiveCeeOhTwo::LDX, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xAE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xAF
+		OPCODE(OP_BB2, &SixtyFiveCeeOhTwo::BB2, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xAF
 		OPCODE(OP_BCS, &SixtyFiveCeeOhTwo::BCS, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0xB0
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0xB1
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0xB2
@@ -504,7 +523,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_LDY, &SixtyFiveCeeOhTwo::LDY, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0xBC
 		OPCODE(OP_LDA, &SixtyFiveCeeOhTwo::LDA, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0xBD
 		OPCODE(OP_LDX, &SixtyFiveCeeOhTwo::LDX, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0xBE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xBF
+		OPCODE(OP_BB3, &SixtyFiveCeeOhTwo::BB3, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xBF
 		OPCODE(OP_CPY, &SixtyFiveCeeOhTwo::CPY, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xC0
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0xC1
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xC2
@@ -519,8 +538,8 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xCB
 		OPCODE(OP_CPY, &SixtyFiveCeeOhTwo::CPY, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xCC
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xCD
-		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 3, 0), // 0xCE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xCF
+		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0xCE
+		OPCODE(OP_BB4, &SixtyFiveCeeOhTwo::BB4, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xCF
 		OPCODE(OP_BNE, &SixtyFiveCeeOhTwo::BNE, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0xD0
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0xD1
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0xD2
@@ -536,7 +555,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xDC
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0xDD
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 7, 0), // 0xDE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xDF
+		OPCODE(OP_BB5, &SixtyFiveCeeOhTwo::BB5, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xDF
 		OPCODE(OP_CPX, &SixtyFiveCeeOhTwo::CPX, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xE0
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_INX, &SixtyFiveCeeOhTwo::A_INX, 1, 6, 0), // 0xE1
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xE2
@@ -552,7 +571,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_CPX, &SixtyFiveCeeOhTwo::CPX, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xEC
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xED
 		OPCODE(OP_INC, &SixtyFiveCeeOhTwo::INC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0xEE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xEF
+		OPCODE(OP_BB6, &SixtyFiveCeeOhTwo::BB6, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xEF
 		OPCODE(OP_BEQ, &SixtyFiveCeeOhTwo::BEQ, ADR_REL, &SixtyFiveCeeOhTwo::A_REL, 1, 2, 0), // 0xF0
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_INY, &SixtyFiveCeeOhTwo::A_INY, 1, 5, 0), // 0xF1
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ZPI, &SixtyFiveCeeOhTwo::A_ZPI, 1, 5, 0), // 0xF2
@@ -568,7 +587,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xFC
 		OPCODE(OP_SBC, &SixtyFiveCeeOhTwo::SBC, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0xFD
 		OPCODE(OP_INC, &SixtyFiveCeeOhTwo::INC, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 7, 0), // 0xFE
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xFF
+		OPCODE(OP_BB7, &SixtyFiveCeeOhTwo::BB7, ADR_ZPG, &SixtyFiveCeeOhTwo::A_ZPG, 2, 2, 0), // 0xFF
 	};
 
 	// state variables
@@ -667,12 +686,42 @@ struct SixtyFiveCeeOhTwo
 	uint8_t ASL();
 	uint8_t BCC();
 	uint8_t BCS();
+
+	uint8_t BR0();
+	uint8_t BR1();
+	uint8_t BR2();
+	uint8_t BR3();
+	uint8_t BR4();
+	uint8_t BR5();
+	uint8_t BR6();
+	uint8_t BR7();
+
+	uint8_t BB0();
+	uint8_t BB1();
+	uint8_t BB2();
+	uint8_t BB3();
+	uint8_t BB4();
+	uint8_t BB5();
+	uint8_t BB6();
+	uint8_t BB7();
+
+  uint8_t BBR(uint8_t bit);
+  uint8_t BBS(uint8_t bit);
+
 	uint8_t BEQ();
 	uint8_t BIT();
 	uint8_t BMI();
 	uint8_t BNE();
 	uint8_t BPL();
 	uint8_t BRA();
+	uint8_t BC0();
+	uint8_t BC1();
+	uint8_t BC2();
+	uint8_t BC3();
+	uint8_t BC4();
+	uint8_t BC5();
+	uint8_t BC6();
+	uint8_t BC7();
 	uint8_t BRK();
 	uint8_t BVC();
 	uint8_t BVS();
@@ -726,203 +775,246 @@ struct SixtyFiveCeeOhTwo
 	uint8_t TXS();
 	uint8_t TRB();
 	uint8_t TSB();
-  
-static constexpr uint8_t
-		//LDA
-		INS_LDA_IM = 0xA9,
-		INS_LDA_ZP = 0xA5,
-		INS_LDA_ZPX = 0xB5,
-		INS_LDA_ABS = 0xAD,
-		INS_LDA_ABSX = 0xBD,
-		INS_LDA_ABSY = 0xB9,
-		INS_LDA_INDX = 0xA1,
-		INS_LDA_INDY = 0xB1,
-    INS_LDA_ZPI = 0xB2,
-		//LDX
-		INS_LDX_IM = 0xA2,
-		INS_LDX_ZP = 0xA6,
-		INS_LDX_ZPY = 0xB6,
-		INS_LDX_ABS = 0xAE,
-		INS_LDX_ABSY = 0xBE,
-		//LDY
-		INS_LDY_IM = 0xA0,
-		INS_LDY_ZP = 0xA4,
-		INS_LDY_ZPX = 0xB4,
-		INS_LDY_ABS = 0xAC,
-		INS_LDY_ABSX = 0xBC,
-		//STA
-		INS_STA_ZP = 0x85,
-		INS_STA_ZPX = 0x95,
-    INS_STA_ZPI = 0x92,
-		INS_STA_ABS = 0x8D,
-		INS_STA_ABSX = 0x9D,
-		INS_STA_ABSY = 0x99,
-		INS_STA_INDX = 0x81,
-		INS_STA_INDY = 0x91,
-		//STX
-		INS_STX_ZP = 0x86,
-		INS_STX_ZPY = 0x96,
-		INS_STX_ABS = 0x8E,
-		//STY
-		INS_STY_ZP = 0x84,
-		INS_STY_ZPX = 0x94,
-		INS_STY_ABS = 0x8C,
 
-		INS_TSX = 0xBA,
-		INS_TXS = 0x9A,
-		INS_PHA = 0x48,
-		INS_PLA = 0x68,
-		INS_PHP = 0x08,
-		INS_PLP = 0x28,
+  static constexpr uint8_t
+      //LDA
+      INS_LDA_IM = 0xA9,
+      INS_LDA_ZP = 0xA5,
+      INS_LDA_ZPX = 0xB5,
+      INS_LDA_ABS = 0xAD,
+      INS_LDA_ABSX = 0xBD,
+      INS_LDA_ABSY = 0xB9,
+      INS_LDA_INDX = 0xA1,
+      INS_LDA_INDY = 0xB1,
+      INS_LDA_ZPI = 0xB2,
+      //LDX
+      INS_LDX_IM = 0xA2,
+      INS_LDX_ZP = 0xA6,
+      INS_LDX_ZPY = 0xB6,
+      INS_LDX_ABS = 0xAE,
+      INS_LDX_ABSY = 0xBE,
+      //LDY
+      INS_LDY_IM = 0xA0,
+      INS_LDY_ZP = 0xA4,
+      INS_LDY_ZPX = 0xB4,
+      INS_LDY_ABS = 0xAC,
+      INS_LDY_ABSX = 0xBC,
+      //STA
+      INS_STA_ZP = 0x85,
+      INS_STA_ZPX = 0x95,
+      INS_STA_ZPI = 0x92,
+      INS_STA_ABS = 0x8D,
+      INS_STA_ABSX = 0x9D,
+      INS_STA_ABSY = 0x99,
+      INS_STA_INDX = 0x81,
+      INS_STA_INDY = 0x91,
+      //STX
+      INS_STX_ZP = 0x86,
+      INS_STX_ZPY = 0x96,
+      INS_STX_ABS = 0x8E,
+      //STY
+      INS_STY_ZP = 0x84,
+      INS_STY_ZPX = 0x94,
+      INS_STY_ABS = 0x8C,
+      //STZ
+      INS_STZ_ZP = 0x64,
+      INS_STZ_ZPX = 0x74,
+      INS_STZ_ABS = 0x9C,
+      INS_STZ_ABSX = 0x9E,
 
-		INS_JMP_ABS = 0x4C,
-		INS_JMP_IND = 0x6C,
-		INS_JSR = 0x20,
-		INS_RTS = 0x60,
-		
-		//Logical Ops
+      INS_TSX = 0xBA,
+      INS_TXS = 0x9A,
+      INS_PHA = 0x48,
+      INS_PLA = 0x68,
+      INS_PHP = 0x08,
+      INS_PLP = 0x28,
+      INS_PHX = 0xDA,
+      INS_PLX = 0xFA,
+      INS_PHY = 0x5A,
+      INS_PLY = 0x7A,
 
-		//AND
-		INS_AND_IM = 0x29,
-		INS_AND_ZP = 0x25,
-		INS_AND_ZPX = 0x35,
-		INS_AND_ABS = 0x2D,
-		INS_AND_ABSX = 0x3D,
-		INS_AND_ABSY = 0x39,
-		INS_AND_INDX = 0x21,
-		INS_AND_INDY = 0x31,
+      // JMP/JSR/RTS
+      INS_JMP_ABS = 0x4C,
+      INS_JMP_IND = 0x6C,
+      INS_JMP_INDX = 0x7C,
+      INS_JSR = 0x20,
+      INS_RTS = 0x60,
 
-		//OR
-		INS_ORA_IM = 0x09,
-		INS_ORA_ZP = 0x05,
-		INS_ORA_ZPX = 0x15,
-		INS_ORA_ABS = 0x0D,
-		INS_ORA_ABSX = 0x1D,
-		INS_ORA_ABSY = 0x19,
-		INS_ORA_INDX = 0x01,
-		INS_ORA_INDY = 0x11,
+      //Logical Ops
 
-		//EOR
-		INS_EOR_IM = 0x49,
-		INS_EOR_ZP  = 0x45,
-		INS_EOR_ZPX = 0x55,
-		INS_EOR_ABS = 0x4D,
-		INS_EOR_ABSX = 0x5D,
-		INS_EOR_ABSY = 0x59,
-		INS_EOR_INDX = 0x41,
-		INS_EOR_INDY = 0x51,
+      //AND
+      INS_AND_IM = 0x29,
+      INS_AND_ZP = 0x25,
+      INS_AND_ZPI = 0x32,
+      INS_AND_ZPX = 0x35,
+      INS_AND_ABS = 0x2D,
+      INS_AND_ABSX = 0x3D,
+      INS_AND_ABSY = 0x39,
+      INS_AND_INDX = 0x21,
+      INS_AND_INDY = 0x31,
 
-		//BIT
-		INS_BIT_ZP = 0x24,
-		INS_BIT_ABS = 0x2C,
+      //OR
+      INS_ORA_IM = 0x09,
+      INS_ORA_ZP = 0x05,
+      INS_ORA_ZPI = 0x12,
+      INS_ORA_ZPX = 0x15,
+      INS_ORA_ABS = 0x0D,
+      INS_ORA_ABSX = 0x1D,
+      INS_ORA_ABSY = 0x19,
+      INS_ORA_INDX = 0x01,
+      INS_ORA_INDY = 0x11,
 
-		//Transfer Registers
-		INS_TAX = 0xAA,
-		INS_TAY = 0xA8,
-		INS_TXA = 0x8A,
-		INS_TYA = 0x98,
+      //EOR
+      INS_EOR_IM = 0x49,
+      INS_EOR_ZP = 0x45,
+      INS_EOR_ZPI = 0x52,
+      INS_EOR_ZPX = 0x55,
+      INS_EOR_ABS = 0x4D,
+      INS_EOR_ABSX = 0x5D,
+      INS_EOR_ABSY = 0x59,
+      INS_EOR_INDX = 0x41,
+      INS_EOR_INDY = 0x51,
 
-		//Increments, Decrements
-		INS_INX = 0xE8,
-		INS_INY = 0xC8,
-		INS_DEY = 0x88,
-		INS_DEX = 0xCA,
-		INS_DEC_ZP = 0xC6,
-		INS_DEC_ZPX = 0xD6,
-		INS_DEC_ABS = 0xCE,
-		INS_DEC_ABSX = 0xDE,
-		INS_INC_ZP = 0xE6,
-		INS_INC_ZPX = 0xF6,
-		INS_INC_ABS = 0xEE,
-		INS_INC_ABSX = 0xFE,
+      //BIT
+      INS_BIT_IM = 0x89,
+      INS_BIT_ZP = 0x24,
+      INS_BIT_ZPX = 0x34,
+      INS_BIT_ABS = 0x2C,
+      INS_BIT_ABSX = 0x3C,
 
-		//branches
-		INS_BEQ = 0xF0,
-		INS_BNE = 0xD0,
-		INS_BCS = 0xB0,
-		INS_BCC = 0x90,
-		INS_BMI = 0x30,
-		INS_BPL = 0x10,
-		INS_BVC = 0x50,
-		INS_BVS = 0x70,
+      INS_TSB_ZP = 0x04,
+      INS_TSB_ABS = 0x0C,
+      INS_TRB_ZP = 0x14,
+      INS_TRB_ABS = 0x1C,
 
-		//status flag changes
-		INS_CLC = 0x18,
-		INS_SEC = 0x38,
-		INS_CLD = 0xD8,
-		INS_SED = 0xF8,
-		INS_CLI = 0x58,
-		INS_SEI = 0x78,
-		INS_CLV = 0xB8,
+      //Transfer Registers
+      INS_TAX = 0xAA,
+      INS_TAY = 0xA8,
+      INS_TXA = 0x8A,
+      INS_TYA = 0x98,
 
-		//Arithmetic
-		INS_ADC = 0x69,
-		INS_ADC_ZP = 0x65,
-		INS_ADC_ZPX = 0x75,
-		INS_ADC_ABS = 0x6D,
-		INS_ADC_ABSX = 0x7D,
-		INS_ADC_ABSY = 0x79,
-		INS_ADC_INDX = 0x61,
-		INS_ADC_INDY = 0x71,
+      //Increments, Decrements
+      INS_DEY = 0x88,
+      INS_DEX = 0xCA,
+      INS_DEC_A = 0x1A,
+      INS_DEC_ZP = 0xC6,
+      INS_DEC_ZPX = 0xD6,
+      INS_DEC_ABS = 0xCE,
+      INS_DEC_ABSX = 0xDE,
 
-		INS_SBC = 0xE9,
-		INS_SBC_ABS = 0xED,
-		INS_SBC_ZP = 0xE5,
-		INS_SBC_ZPX = 0xF5,
-		INS_SBC_ABSX = 0xFD,
-		INS_SBC_ABSY = 0xF9,
-		INS_SBC_INDX = 0xE1,
-		INS_SBC_INDY = 0xF1,
+      INS_INX = 0xE8,
+      INS_INY = 0xC8,
+      INS_INC_A = 0x3A,
+      INS_INC_ZP = 0xE6,
+      INS_INC_ZPX = 0xF6,
+      INS_INC_ABS = 0xEE,
+      INS_INC_ABSX = 0xFE,
 
-		// Register Comparison
-		INS_CMP = 0xC9,
-		INS_CMP_ZP = 0xC5,
-		INS_CMP_ZPX = 0xD5,
-		INS_CMP_ABS = 0xCD,
-		INS_CMP_ABSX = 0xDD,
-		INS_CMP_ABSY = 0xD9,
-		INS_CMP_INDX = 0xC1,
-		INS_CMP_INDY = 0xD1,
+      //branches
+      INS_BEQ = 0xF0,
+      INS_BNE = 0xD0,
+      INS_BCS = 0xB0,
+      INS_BCC = 0x90,
+      INS_BMI = 0x30,
+      INS_BPL = 0x10,
+      INS_BVC = 0x50,
+      INS_BVS = 0x70,
+      INS_BRA = 0x80,
+      
+      INS_BBR0 = 0x0F,
+      INS_BBR1 = 0x1F,
+      INS_BBR2 = 0x2F,
+      INS_BBR3 = 0x3F,
+      INS_BBR4 = 0x4F,
+      INS_BBR5 = 0x5F,
+      INS_BBR6 = 0x6F,
+      INS_BBR7 = 0x7F,
+      INS_BBS0 = 0x8F,
+      INS_BBS1 = 0x9F,
+      INS_BBS2 = 0xAF,
+      INS_BBS3 = 0xBF,
+      INS_BBS4 = 0xCF,
+      INS_BBS5 = 0xDF,
+      INS_BBS6 = 0xEF,
+      INS_BBS7 = 0xFF,
 
-		INS_CPX = 0xE0,
-		INS_CPY = 0xC0,
-		INS_CPX_ZP = 0xE4,
-		INS_CPY_ZP = 0xC4,
-		INS_CPX_ABS = 0xEC,
-		INS_CPY_ABS = 0xCC,
+      //status flag changes
+      INS_CLC = 0x18,
+      INS_SEC = 0x38,
+      INS_CLD = 0xD8,
+      INS_SED = 0xF8,
+      INS_CLI = 0x58,
+      INS_SEI = 0x78,
+      INS_CLV = 0xB8,
 
-		// shifts
-		INS_ASL = 0x0A,
-		INS_ASL_ZP = 0x06,
-		INS_ASL_ZPX = 0x16,
-		INS_ASL_ABS = 0x0E,
-		INS_ASL_ABSX = 0x1E,
+      //Arithmetic
+      INS_ADC_IM = 0x69,
+      INS_ADC_ZP = 0x65,
+      INS_ADC_ZPI = 0x72,
+      INS_ADC_ZPX = 0x75,
+      INS_ADC_ABS = 0x6D,
+      INS_ADC_ABSX = 0x7D,
+      INS_ADC_ABSY = 0x79,
+      INS_ADC_INDX = 0x61,
+      INS_ADC_INDY = 0x71,
 
-		INS_LSR = 0x4A,
-		INS_LSR_ZP = 0x46,
-		INS_LSR_ZPX = 0x56,
-		INS_LSR_ABS = 0x4E,
-		INS_LSR_ABSX = 0x5E,
+      INS_SBC_IM = 0xE9,
+      INS_SBC_ABS = 0xED,
+      INS_SBC_ZP = 0xE5,
+      INS_SBC_ZPI = 0xF2,
+      INS_SBC_ZPX = 0xF5,
+      INS_SBC_ABSX = 0xFD,
+      INS_SBC_ABSY = 0xF9,
+      INS_SBC_INDX = 0xE1,
+      INS_SBC_INDY = 0xF1,
 
-		INS_ROL = 0x2A,
-		INS_ROL_ZP = 0x26,
-		INS_ROL_ZPX = 0x36,
-		INS_ROL_ABS = 0x2E,
-		INS_ROL_ABSX = 0x3E,
+      // Register Comparison
+      INS_CMP_IM = 0xC9,
+      INS_CMP_ZP = 0xC5,
+      INS_CMP_ZPI = 0xD2,
+      INS_CMP_ZPX = 0xD5,
+      INS_CMP_ABS = 0xCD,
+      INS_CMP_ABSX = 0xDD,
+      INS_CMP_ABSY = 0xD9,
+      INS_CMP_INDX = 0xC1,
+      INS_CMP_INDY = 0xD1,
 
-		INS_ROR = 0x6A,
-		INS_ROR_ZP = 0x66,
-		INS_ROR_ZPX = 0x76,
-		INS_ROR_ABS = 0x6E,
-		INS_ROR_ABSX = 0x7E,
+      INS_CPX_IM = 0xE0,
+      INS_CPY_IM = 0xC0,
+      INS_CPX_ZP = 0xE4,
+      INS_CPY_ZP = 0xC4,
+      INS_CPX_ABS = 0xEC,
+      INS_CPY_ABS = 0xCC,
 
-		//misc
-		INS_NOP = 0xEA,
-		INS_BRK = 0x00,
-		INS_RTI = 0x40
-		;
+      // shifts
+      INS_ASL = 0x0A,
+      INS_ASL_ZP = 0x06,
+      INS_ASL_ZPX = 0x16,
+      INS_ASL_ABS = 0x0E,
+      INS_ASL_ABSX = 0x1E,
 
+      INS_LSR = 0x4A,
+      INS_LSR_ZP = 0x46,
+      INS_LSR_ZPX = 0x56,
+      INS_LSR_ABS = 0x4E,
+      INS_LSR_ABSX = 0x5E,
 
+      INS_ROL = 0x2A,
+      INS_ROL_ZP = 0x26,
+      INS_ROL_ZPX = 0x36,
+      INS_ROL_ABS = 0x2E,
+      INS_ROL_ABSX = 0x3E,
+
+      INS_ROR = 0x6A,
+      INS_ROR_ZP = 0x66,
+      INS_ROR_ZPX = 0x76,
+      INS_ROR_ABS = 0x6E,
+      INS_ROR_ABSX = 0x7E,
+
+      //misc
+      INS_NOP = 0xEA,
+      INS_BRK = 0x00,
+      INS_RTI = 0x40;
 };
 
 /**

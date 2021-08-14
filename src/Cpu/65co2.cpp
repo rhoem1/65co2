@@ -16,10 +16,12 @@ const char sMODES[15][6] = {
 	"REL  "};
 
 // name
-const char nmem[65][4] = {
+const char nmem[81][4] = {
 	"BAD",
 	"ADC", "AND", "ASL",
 	"BCC", "BCS", "BEQ", "BIT", "BMI", "BNE", "BPL", "BRA", "BRK", "BVC", "BVS",
+  "BB0", "BB1", "BB2", "BB3", "BB4", "BB5", "BB6", "BB7",
+  "BR0", "BR1", "BR2", "BR3", "BR4", "BR5", "BR6", "BR7",
 	"CLC", "CLD", "CLI", "CLV", "CMP", "CPX", "CPY",
 	"DEC", "DEX", "DEY",
 	"EOR",
@@ -381,8 +383,6 @@ uint8_t SixtyFiveCeeOhTwo::A_AIX()
 	address = readInByte(o2 + o1);
 	o1++;
 	address += readInByte(o2 + o1) << 8;
-	if (!OPCODES[opcode].rw)
-		alu = readInByte(address);
 	return 0;
 }
 // ADR_IND
@@ -464,7 +464,7 @@ uint8_t SixtyFiveCeeOhTwo::A_ZPI()
 {
 	zpage = readInByte(r.PC);
 	int32_t o1 = readInByte(zpage);
-	int32_t o2 = readInByte(zpage + 1) << 8;
+	int32_t o2 = readInByte((zpage + 1) & 0xFF) << 8;
 	address = (o1 + o2) & 0XFFFF;
 	if (!OPCODES[opcode].rw)
 		alu = readInByte(address);
@@ -738,12 +738,12 @@ uint8_t SixtyFiveCeeOhTwo::SEC()
 }
 uint8_t SixtyFiveCeeOhTwo::CLD()
 { // clear decimal
-	//r.SR_DECIMAL = false;
+	r.SR_DECIMAL = false;
 	return 0;
 }
 uint8_t SixtyFiveCeeOhTwo::SED()
 { // set decimal
-	//r.SR_DECIMAL = true;
+	r.SR_DECIMAL = true;
 	return 0;
 }
 uint8_t SixtyFiveCeeOhTwo::CLI()
@@ -1026,4 +1026,108 @@ uint8_t SixtyFiveCeeOhTwo::TSB()
 	alu |= r.A;
 	writeOK = 1;
 	return 0;
+}
+
+uint8_t SixtyFiveCeeOhTwo::BBR(uint8_t bit)
+{
+	if (!(alu & bit))
+	{
+    r.PC--;
+    r.cycles += A_REL();
+    r.PC = address;
+		return alu;
+	}
+	return 0;
+}
+
+uint8_t SixtyFiveCeeOhTwo::BBS(uint8_t bit)
+{
+	if ((alu & bit))
+	{
+    r.PC--;
+    r.cycles += A_REL();
+    r.PC = address;
+		return alu;
+	}
+	return 0;
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR0()
+{
+  return BBR(0x01);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR1()
+{
+  return BBR(0x02);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR2()
+{
+  return BBR(0x04);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR3()
+{
+  return BBR(0x08);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR4()
+{
+  return BBR(0x10);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR5()
+{
+  return BBR(0x20);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR6()
+{
+  return BBR(0x40);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BR7()
+{
+  return BBR(0x80);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB0()
+{
+  return BBS(0x01);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB1()
+{
+  return BBS(0x02);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB2()
+{
+  return BBS(0x04);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB3()
+{
+  return BBS(0x08);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB4()
+{
+  return BBS(0x10);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB5()
+{
+  return BBS(0x20);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB6()
+{
+  return BBS(0x40);
+}
+
+uint8_t SixtyFiveCeeOhTwo::BB7()
+{
+  return BBS(0x80);
 }

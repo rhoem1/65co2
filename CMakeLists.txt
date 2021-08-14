@@ -41,6 +41,34 @@ add_executable(
   src/Tests/STX.cpp
   src/Tests/STY.cpp
   src/Tests/STA.cpp
+  src/Tests/STZ.cpp
+
+  src/Tests/DEC.cpp
+  src/Tests/INC.cpp
+
+  src/Tests/ADC.cpp
+  src/Tests/SBC.cpp
+
+  src/Tests/AND.cpp
+  src/Tests/EOR.cpp
+  src/Tests/ORA.cpp
+
+  src/Tests/ASL.cpp
+  src/Tests/LSR.cpp
+  src/Tests/ROL.cpp
+  src/Tests/ROR.cpp
+
+  src/Tests/BIT.cpp
+  src/Tests/CMP.cpp
+  src/Tests/CPX.cpp
+  src/Tests/CPY.cpp
+
+  src/Tests/Stack.cpp
+  src/Tests/StatusFlags.cpp
+  src/Tests/Branches.cpp
+  src/Tests/Jumps.cpp
+  src/Tests/Transfers.cpp
+  src/Tests/Misc.cpp
 )
 target_link_libraries(testcpu gtest_main)
 include(GoogleTest)

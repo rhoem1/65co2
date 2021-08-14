@@ -4,212 +4,67 @@
 
 TEST_F(CpuTest, LDYImmediate)
 {
-  uint16_t addr = 0x200;
-  uint8_t val = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_IM);
-  addr++;
-  cpu.write(addr, val);
-  addr++;
-  
-  uint64_t cycles = cpu.do_cycle();
-  
-  EXPECT_EQ(cycles, 2);
-
-  if(val > 127)
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
-  else
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
-  
-  
-  if(val != 0)
-	EXPECT_EQ(cpu.r.SR_ZERO, false);
-  else
-	EXPECT_EQ(cpu.r.SR_ZERO, true);
-
-	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
-	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
-	EXPECT_EQ(cpu.r.SR_CARRY, false);
-	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.intb, false);
-
-	// registers
-	EXPECT_EQ(cpu.r.SP, 0xFD);
-	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, 0);
-	EXPECT_EQ(cpu.r.Y, val);
-  EXPECT_EQ(cpu.r.PC, addr);
-  
+  Y = randomByte();
+  code(SixtyFiveCeeOhTwo::INS_LDY_IM, Y);
+  executeCycles(2);
+  expectFlagsForValue(Y);
+  expectRegisters(0, 0, Y, 0xFD);
+  expectPC();
 }
 
 TEST_F(CpuTest, LDYZeroPage)
 {
-  uint16_t addr = 0x200;
-  uint8_t val = randomByte();
-  uint8_t zp = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ZP);
-  addr++;
-  cpu.write(addr, zp);
-  addr++;
-  cpu.write(zp, val);
-  
-  uint64_t cycles = cpu.do_cycle();
-  
-  EXPECT_EQ(cycles, 3);
-
-  if(val > 127)
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
-  else
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
-  
-  
-  if(val != 0)
-	EXPECT_EQ(cpu.r.SR_ZERO, false);
-  else
-	EXPECT_EQ(cpu.r.SR_ZERO, true);
-
-	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
-	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
-	EXPECT_EQ(cpu.r.SR_CARRY, false);
-	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.intb, false);
-
-	// registers
-	EXPECT_EQ(cpu.r.SP, 0xFD);
-	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, 0);
-	EXPECT_EQ(cpu.r.Y, val);
-  EXPECT_EQ(cpu.r.PC, addr);
-  
+  Y = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write(zeroPageAddress, Y);
+  code(SixtyFiveCeeOhTwo::INS_LDY_ZP, zeroPageAddress);
+  executeCycles(3);
+  expectFlagsForValue(Y);
+  expectRegisters(0, 0, Y, 0xFD);
+  expectPC();
 }
 
 TEST_F(CpuTest, LDYZeroPageX)
 {
-  uint16_t addr = 0x200;
-  uint8_t val = randomByte();
-  uint8_t zp = randomByte();
-  uint8_t x = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ZPX);
-  addr++;
-  cpu.write(addr, zp);
-  addr++;
-  cpu.write((zp + x) & 0xFF, val);
-  
-  cpu.r.X = x;
-  
-  uint64_t cycles = cpu.do_cycle();
-  
-  EXPECT_EQ(cycles, 4);
-
-  if(val > 127)
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
-  else
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
-  
-  
-  if(val != 0)
-	EXPECT_EQ(cpu.r.SR_ZERO, false);
-  else
-	EXPECT_EQ(cpu.r.SR_ZERO, true);
-
-	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
-	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
-	EXPECT_EQ(cpu.r.SR_CARRY, false);
-	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.intb, false);
-
-	// registers
-	EXPECT_EQ(cpu.r.SP, 0xFD);
-	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, x);
-	EXPECT_EQ(cpu.r.Y, val);
-  EXPECT_EQ(cpu.r.PC, addr);
-  
+  X = randomByte();
+  Y = randomByte();
+  zeroPageAddress = randomByte();
+  cpu.write((zeroPageAddress + X) & 0xFF, Y);
+  code(SixtyFiveCeeOhTwo::INS_LDX_IM, X);
+  executeCycles(2);
+  code(SixtyFiveCeeOhTwo::INS_LDY_ZPX, zeroPageAddress);
+  executeCycles(4);
+  expectFlagsForValue(Y);
+  expectRegisters(0, X, Y, 0xFD);
+  expectPC();
 }
 
 TEST_F(CpuTest, LDYAbsolute)
 {
-  uint16_t addr = 0x200;
-  uint8_t val = randomByte();
-  uint8_t zp = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ABS);
-  addr++;
-  cpu.write(addr, zp);
-  addr++;
-  cpu.write(addr, 0x80);
-  addr++;
-  cpu.write(0x8000 + zp, val);
-  
-  uint64_t cycles = cpu.do_cycle();
-  
-  EXPECT_EQ(cycles, 4);
-
-  if(val > 127)
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
-  else
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
-  
-  
-  if(val != 0)
-	EXPECT_EQ(cpu.r.SR_ZERO, false);
-  else
-	EXPECT_EQ(cpu.r.SR_ZERO, true);
-
-	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
-	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
-	EXPECT_EQ(cpu.r.SR_CARRY, false);
-	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.intb, false);
-
-	// registers
-	EXPECT_EQ(cpu.r.SP, 0xFD);
-	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, 0);
-	EXPECT_EQ(cpu.r.Y, val);
-  EXPECT_EQ(cpu.r.PC, addr);
-  
+  Y = randomByte();
+  addr = randomWordBetween(0x300, 0xC000);
+  cpu.write(addr, Y);
+  code(SixtyFiveCeeOhTwo::INS_LDY_ABS, addr);
+  executeCycles(4);
+  expectFlagsForValue(Y);
+  expectRegisters(0, 0, Y, 0xFD);
+  expectPC();
 }
 
 TEST_F(CpuTest, LDYAbsoluteX)
 {
-  uint16_t addr = 0x200;
-  uint8_t val = randomByte();
-  uint8_t x = randomByte();
-  cpu.write(addr, SixtyFiveCeeOhTwo::INS_LDY_ABSX);
-  addr++;
-  cpu.write(addr, 0x00);
-  addr++;
-  cpu.write(addr, 0x80);
-  addr++;
-  cpu.write(0x8000 + x, val);
-  
-  cpu.r.X = x;
-
-  uint64_t cycles = cpu.do_cycle();
-  
-  EXPECT_EQ(cycles, 4);
-
-  if(val > 127)
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
+  X = randomByte();
+  Y = randomByte();
+  addr = randomWordBetween(0x300, 0xC000);
+  cpu.write(addr + X, Y);
+  code(SixtyFiveCeeOhTwo::INS_LDX_IM, X);
+  executeCycles(2);
+  code(SixtyFiveCeeOhTwo::INS_LDY_ABSX, addr);
+  if(hiByte(addr + X) != hiByte(addr))
+    executeCycles(5);
   else
-	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
-  
-  
-  if(val != 0)
-	EXPECT_EQ(cpu.r.SR_ZERO, false);
-  else
-	EXPECT_EQ(cpu.r.SR_ZERO, true);
-
-	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
-	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
-	EXPECT_EQ(cpu.r.SR_CARRY, false);
-	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.intb, false);
-
-	// registers
-	EXPECT_EQ(cpu.r.SP, 0xFD);
-	EXPECT_EQ(cpu.r.A, 0);
-	EXPECT_EQ(cpu.r.X, x);
-	EXPECT_EQ(cpu.r.Y, val);
-  EXPECT_EQ(cpu.r.PC, addr);
-  
+    executeCycles(4);
+  expectFlagsForValue(Y);
+  expectRegisters(0, X, Y, 0xFD);
+  expectPC();
 }
