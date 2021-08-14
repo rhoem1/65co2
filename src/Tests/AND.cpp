@@ -54,7 +54,7 @@ TEST_F(CpuTest, INS_AND_ZPX)
   val = randomByte();
   A = randomByte();
   X = randomByte();
-  zeroPageAddress = 0x80;
+  zeroPageAddress = randomByte();
   cpu.write(loByte(zeroPageAddress + X), val);
   code(SixtyFiveCeeOhTwo::INS_LDX_IM, X);
   executeCycles(2);

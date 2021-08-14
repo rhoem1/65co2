@@ -135,6 +135,25 @@ void CpuTest::expectBITFlagsForValueAndA(int16_t testValue, uint8_t A)
   EXPECT_EQ(cpu.r.intb, false);
 }
 
+void CpuTest::expectNoCarryFlagsForValue(int16_t testValue)
+{
+  if (testValue & 0x80)
+    EXPECT_EQ(cpu.r.SR_NEGATIVE, true);
+  else
+    EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
+
+  if (testValue == 0)
+    EXPECT_EQ(cpu.r.SR_ZERO, true);
+  else
+    EXPECT_EQ(cpu.r.SR_ZERO, false);
+  
+  EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
+
+  EXPECT_EQ(cpu.r.SR_DECIMAL, false);
+  EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
+  EXPECT_EQ(cpu.r.intb, false);
+}
+
 void CpuTest::expectADCFlagsForValue(int16_t testValue)
 {
   if (testValue & 0x80)

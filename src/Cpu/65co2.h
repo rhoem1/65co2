@@ -1034,10 +1034,10 @@ struct SixtyFiveCeeOhTwo
       INS_CMP_INDY = 0xD1,
 
       INS_CPX_IM = 0xE0,
-      INS_CPY_IM = 0xC0,
       INS_CPX_ZP = 0xE4,
-      INS_CPY_ZP = 0xC4,
       INS_CPX_ABS = 0xEC,
+      INS_CPY_IM = 0xC0,
+      INS_CPY_ZP = 0xC4,
       INS_CPY_ABS = 0xCC,
 
       // shifts

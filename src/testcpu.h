@@ -67,12 +67,14 @@ class CpuTest : public ::testing::Test {
   void expectADCFlagsForValue(int16_t val);
   void expectSBCFlagsForValue(int16_t val);
   void expectBITFlagsForValueAndA(int16_t val, uint8_t A);
-  void executeAndExpectBranchPC(uint8_t branchAddress, bool branch);
+  void expectNoCarryFlagsForValue(int16_t val);
+
   
   void expectRegisters(uint8_t A, uint8_t X, uint8_t Y, uint8_t SP);
   
   void expectPC();
 
   void expectPC(uint16_t PC);
+  void executeAndExpectBranchPC(uint8_t branchAddress, bool branch);
 
 };
