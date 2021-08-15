@@ -106,14 +106,17 @@ void SixtyFiveCeeOhTwo::clear_maskable_interrupt(void *source)
 	if (interruptSources.empty())
 		r.intb = false;
 }
+
 /**
 	 * non maskable interrupt
 	 * do it now!
+   * Hey! I'm not threadable! don't do it!
 	 */
 void SixtyFiveCeeOhTwo::non_maskable_interrupt()
 {
 	push_cpu_interrupt(r.PC, false);
 	setPC(readInWord(NMI_VECTOR));
+  r.cycles += 8;
 }
 
 /**
@@ -138,10 +141,10 @@ uint8_t SixtyFiveCeeOhTwo::pop_stack()
 }
 
 /**
-	 * do next operation
-	 * @return uint8_t number of cycles operation took
-	 */
-uint8_t SixtyFiveCeeOhTwo::do_cycle()
+ * do next operation
+ * @return uint8_t number of cycles operation took
+ */
+uint64_t SixtyFiveCeeOhTwo::do_operation()
 {
 
 	// save program counter
@@ -153,7 +156,7 @@ uint8_t SixtyFiveCeeOhTwo::do_cycle()
 	r.PC += 1;
 
 	// starting point for cycle count for this opcode. might increase
-	r.cycles = OPCODES[opcode].cycles;
+	r.cycles += OPCODES[opcode].cycles;
 
 	// reset ALU to 0
 	alu = 0;
@@ -202,7 +205,7 @@ uint8_t SixtyFiveCeeOhTwo::do_cycle()
 	}
 
 	// check intb state if high and SR_INTERRUPT is low, trigger interrupt
-	if (!r.SR_INTERRUPT && r.intb)
+	if (r.SR_INTERRUPT == false && r.intb == true)
 	{
 		push_cpu_interrupt(r.PC, false);
 		setPC(readInWord(IRQBRK_VECTOR));
@@ -212,7 +215,27 @@ uint8_t SixtyFiveCeeOhTwo::do_cycle()
 	}
 
 	// all done
-	return r.cycles;
+  uint64_t cycleOut = r.cycles;
+  r.cycles = 0;
+	return cycleOut;
+}
+
+// what would be nice is for the above to track it's state based on the current cycle
+// like, the read for the op happens on 0, then based on addressing, read cycles,
+// then the operation, with it's extra cycles of processing (like branches)
+// then the write, if required
+// would that be more "cycle accurate" or just "overkill, it's an interpreter"?
+
+uint64_t SixtyFiveCeeOhTwo::execute_one_cycle()
+{
+  // burn a bit of time
+  r.cycles -= 1;
+  if(r.cycles == 0) {
+    // time do do the next thing
+    r.cycles += do_operation();
+    // puts the cycles back in r.cycles
+  }
+  return r.cycles;
 }
 
 /**

@@ -123,7 +123,14 @@ struct SixtyFiveCeeOhTwo
 	 * do next operation
 	 * @return uint8_t number of cycles operation took
 	 */
-	uint8_t do_cycle();
+	uint64_t do_operation();
+  
+  
+  /**
+   * decrements r.cycles until 0, then calls do_operation
+   * @return uint64_t remaining cycles, returns a 1 on edge of next operation
+   */
+  uint64_t execute_one_cycle();
 
 	/**
 	 * dumpCpuState

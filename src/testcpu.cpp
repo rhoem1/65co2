@@ -13,6 +13,8 @@ void CpuTest::SetUp()
   cpu.write(RESET_VECTOR, STARTING_ADDRESS & 0xFF);
   cpu.write(RESET_VECTOR + 1, STARTING_ADDRESS >> 8);
   cpu.reset_cpu();
+  // don't care about those reset cycles
+  cpu.r.cycles = 0;
 
   zeroPageAddress = 0;
   val = 0;
@@ -66,7 +68,7 @@ void CpuTest::code(uint8_t op, uint16_t data)
 
 void CpuTest::executeCycles(uint64_t expectedCycles)
 {
-  uint64_t actualCycles = cpu.do_cycle();
+  uint64_t actualCycles = cpu.do_operation();
   EXPECT_EQ(actualCycles, expectedCycles);
 }
 
@@ -90,7 +92,6 @@ void CpuTest::expectFalseFlags()
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_CARRY, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectFlagsForValue(int16_t testValue)
@@ -109,7 +110,6 @@ void CpuTest::expectFlagsForValue(int16_t testValue)
   EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectBITFlagsForValueAndA(int16_t testValue, uint8_t A)
@@ -132,7 +132,6 @@ void CpuTest::expectBITFlagsForValueAndA(int16_t testValue, uint8_t A)
   EXPECT_EQ(cpu.r.SR_CARRY, false);
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectNoCarryFlagsForValue(int16_t testValue)
@@ -151,7 +150,6 @@ void CpuTest::expectNoCarryFlagsForValue(int16_t testValue)
 
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectADCFlagsForValue(int16_t testValue)
@@ -176,7 +174,6 @@ void CpuTest::expectADCFlagsForValue(int16_t testValue)
 
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectSBCFlagsForValue(int16_t testValue)
@@ -201,7 +198,6 @@ void CpuTest::expectSBCFlagsForValue(int16_t testValue)
 
   EXPECT_EQ(cpu.r.SR_DECIMAL, false);
   EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-  EXPECT_EQ(cpu.r.intb, false);
 }
 
 void CpuTest::expectRegisters(uint8_t A, uint8_t X, uint8_t Y, uint8_t SP)
@@ -249,14 +245,19 @@ void CpuTest::executeAndExpectBranchPC(uint8_t branchAddress, bool branch)
 
 TEST_F(CpuTest, ResetCorrect)
 {
+  cpu.reset_cpu();
 	// flags
 	EXPECT_EQ(cpu.r.SR_NEGATIVE, false);
 	EXPECT_EQ(cpu.r.SR_OVERFLOW, false);
 	EXPECT_EQ(cpu.r.SR_DECIMAL, false);
 	EXPECT_EQ(cpu.r.SR_ZERO, false);
 	EXPECT_EQ(cpu.r.SR_CARRY, false);
+  // reset turns on interrupt mask
 	EXPECT_EQ(cpu.r.SR_INTERRUPT, true);
-	EXPECT_EQ(cpu.r.SRgetByte(false), 0x24);
+  // SR value should be 
+	EXPECT_EQ(cpu.r.SRgetByte(false), SR_UNUSED_B | SR_INTERRUPT_B);
+
+  // intb should be low
 	EXPECT_EQ(cpu.r.intb, false);
 
 	// registers
@@ -264,6 +265,8 @@ TEST_F(CpuTest, ResetCorrect)
 	EXPECT_EQ(cpu.r.A, 0);
 	EXPECT_EQ(cpu.r.X, 0);
 	EXPECT_EQ(cpu.r.Y, 0);
+  
+  // SetUp writes 0x0200 to the reset vector, all tests run from here
 	EXPECT_EQ(cpu.r.PC, 0x0200);
 
 	// cycles

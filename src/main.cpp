@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 		while (apple->running)
 		{
 			// run an op, get the cycles used
-			int cycles = apple->cpu->do_cycle();
+			int cycles = apple->cpu->do_operation();
 
 			// pass the cycles used to things that need to know
 			apple->cycleCounter->update(cycles);
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 		while (apple->running)
 		{
 			// run an op, get the cycles used
-			int cycles = apple->cpu->do_cycle();
+			int cycles = apple->cpu->do_operation();
 
 			// pass the cycles used to things that need to know
 			apple->cycleCounter->update(cycles);
