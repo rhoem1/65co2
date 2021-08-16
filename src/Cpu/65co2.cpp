@@ -16,7 +16,7 @@ const char sMODES[15][6] = {
 	"REL  "};
 
 // name
-const char nmem[97][4] = {
+const char nmem[99][4] = {
 	"BAD",
 	"ADC", "AND", "ASL",
 	"BCC", "BCS", "BEQ", "BIT", "BMI", "BNE", "BPL", "BRA", "BRK", "BVC", "BVS",
@@ -35,7 +35,8 @@ const char nmem[97][4] = {
 	"PHA", "PHP", "PLA", "PLP", "PHX", "PHY", "PLX", "PLY",
 	"ROL", "ROR", "RTI", "RTS",
 	"SBC", "SEC", "SED", "SEI", "STA", "STX", "STY", "STZ",
-	"TAX", "TAY", "TSX", "TXA", "TXS", "TYA", "TRB", "TSB"};
+	"TAX", "TAY", "TSX", "TXA", "TXS", "TYA", "TRB", "TSB",
+  "STP", "WAI"};
 
 void SixtyFiveCeeOhTwo::addIntercept(uint16_t address, memoryIntercept *i)
 {
@@ -78,6 +79,8 @@ void SixtyFiveCeeOhTwo::reset_cpu()
 	r.Y = 0;
 	r.cycles = 7; // starting number of cycles -- reset always takes 7
 	r.intb = false;
+  r.stopped = false;
+  r.waiting = false;
 }
 
 void SixtyFiveCeeOhTwo::setPC(uint16_t adr)
@@ -96,6 +99,7 @@ void SixtyFiveCeeOhTwo::maskable_interrupt(void *source)
 {
 	interruptSources[source] = true;
 	r.intb = true;
+  r.waiting = false;
 }
 
 void SixtyFiveCeeOhTwo::clear_maskable_interrupt(void *source)
@@ -116,6 +120,7 @@ void SixtyFiveCeeOhTwo::non_maskable_interrupt()
 {
 	push_cpu_interrupt(r.PC, false);
 	setPC(readInWord(NMI_VECTOR));
+  r.waiting = false;
   r.cycles += 8;
 }
 
@@ -146,63 +151,67 @@ uint8_t SixtyFiveCeeOhTwo::pop_stack()
  */
 uint64_t SixtyFiveCeeOhTwo::do_operation()
 {
+  if(r.stopped)
+    return 0;
 
-	// save program counter
-	r.old_PC = r.PC;
+  if(!r.waiting) {
+    // save program counter
+    r.old_PC = r.PC;
 
-	// get opcode at PC
-	opcode = readInByte(r.PC);
-	// point to first data byte
-	r.PC += 1;
+    // get opcode at PC
+    opcode = readInByte(r.PC);
+    // point to first data byte
+    r.PC += 1;
 
-	// starting point for cycle count for this opcode. might increase
-	r.cycles += OPCODES[opcode].cycles;
+    // starting point for cycle count for this opcode. might increase
+    r.cycles += OPCODES[opcode].cycles;
 
-	// reset ALU to 0
-	alu = 0;
-	zpage = 0;
-	address = 0;
+    // reset ALU to 0
+    alu = 0;
+    zpage = 0;
+    address = 0;
 
-	eADDRESSING addressingMode = OPCODES[opcode].mode;
+    eADDRESSING addressingMode = OPCODES[opcode].mode;
 
-	writeOK = OPCODES[opcode].rw;
+    writeOK = OPCODES[opcode].rw;
 
-	r.cycles += (this->*OPCODES[opcode].fetch)();
+    r.cycles += (this->*OPCODES[opcode].fetch)();
 
-	old_alu = alu;
+    old_alu = alu;
 
-	// move PC now
-	r.PC += OPCODES[opcode].step;
+    // move PC now
+    r.PC += OPCODES[opcode].step;
 
-	r.cycles += (this->*OPCODES[opcode].op)();
+    r.cycles += (this->*OPCODES[opcode].op)();
 
-	// store alu using addressing mode
-	if (writeOK)
-	{
-		switch (addressingMode)
-		{
+    // store alu using addressing mode
+    if (writeOK)
+    {
+      switch (addressingMode)
+      {
 
-		case ADR_ACC:
-			r.A = alu & 0xFF;
-			break;
+      case ADR_ACC:
+        r.A = alu & 0xFF;
+        break;
 
-		case ADR_ABS:
-		case ADR_ABX:
-		case ADR_ABY:
-		case ADR_AIX:
-		case ADR_ZPG:
-		case ADR_ZPX:
-		case ADR_ZPY:
-		case ADR_ZPI:
-		case ADR_INX:
-		case ADR_INY:
-			writeIn(address, alu & 0xFF);
-			break;
+      case ADR_ABS:
+      case ADR_ABX:
+      case ADR_ABY:
+      case ADR_AIX:
+      case ADR_ZPG:
+      case ADR_ZPX:
+      case ADR_ZPY:
+      case ADR_ZPI:
+      case ADR_INX:
+      case ADR_INY:
+        writeIn(address, alu & 0xFF);
+        break;
 
-		default:
-			break;
-		}
-	}
+      default:
+        break;
+      }
+    }
+  }
 
 	// check intb state if high and SR_INTERRUPT is low, trigger interrupt
 	if (r.SR_INTERRUPT == false && r.intb == true)
@@ -228,6 +237,9 @@ uint64_t SixtyFiveCeeOhTwo::do_operation()
 
 uint64_t SixtyFiveCeeOhTwo::execute_one_cycle()
 {
+  if(r.stopped) 
+    return 0;
+
   // burn a bit of time
   r.cycles -= 1;
   if(r.cycles == 0) {
@@ -235,6 +247,7 @@ uint64_t SixtyFiveCeeOhTwo::execute_one_cycle()
     r.cycles += do_operation();
     // puts the cycles back in r.cycles
   }
+  // normally never returns 0
   return r.cycles;
 }
 
@@ -1249,4 +1262,16 @@ uint8_t SixtyFiveCeeOhTwo::SB6()
 uint8_t SixtyFiveCeeOhTwo::SB7()
 {
   return SMB(0x80);
+}
+
+uint8_t SixtyFiveCeeOhTwo::STP()
+{
+  r.stopped = true;
+  return 0;
+}
+
+uint8_t SixtyFiveCeeOhTwo::WAI()
+{
+  r.waiting = true;
+  return 0;
 }

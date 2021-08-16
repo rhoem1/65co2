@@ -268,7 +268,9 @@ struct SixtyFiveCeeOhTwo
 		OP_TXS, // transfer X to stack pointer
 		OP_TYA, // transfer Y to accumulator
 		OP_TRB, // test and reset bits
-		OP_TSB	// test and set bits
+		OP_TSB,	// test and set bits
+    OP_STP, // stop processing until reset
+    OP_WAI  // wait for interrupt
 	};
 
 	typedef struct __registers
@@ -289,6 +291,8 @@ struct SixtyFiveCeeOhTwo
 		bool SR_CARRY;
 
 		bool intb;
+    bool stopped;
+    bool waiting;
 
 		inline void SRsetByte(uint8_t b)
 		{
@@ -560,7 +564,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_INY, &SixtyFiveCeeOhTwo::INY, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xC8
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_IMM, &SixtyFiveCeeOhTwo::A_IMM, 1, 2, 0), // 0xC9
 		OPCODE(OP_DEX, &SixtyFiveCeeOhTwo::DEX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xCA
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xCB
+		OPCODE(OP_WAI, &SixtyFiveCeeOhTwo::WAI, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0xCB
 		OPCODE(OP_CPY, &SixtyFiveCeeOhTwo::CPY, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xCC
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 4, 0), // 0xCD
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ABS, &SixtyFiveCeeOhTwo::A_ABS, 2, 6, 0), // 0xCE
@@ -576,7 +580,7 @@ struct SixtyFiveCeeOhTwo
 		OPCODE(OP_CLD, &SixtyFiveCeeOhTwo::CLD, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 2, 0), // 0xD8
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABY, &SixtyFiveCeeOhTwo::A_ABY, 2, 4, 0), // 0xD9
 		OPCODE(OP_PHX, &SixtyFiveCeeOhTwo::PHX, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0xDA
-		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xDB
+		OPCODE(OP_STP, &SixtyFiveCeeOhTwo::STP, ADR_IMP, &SixtyFiveCeeOhTwo::A_IMP, 0, 3, 0), // 0xDB
 		OPCODE(OP_BAD, &SixtyFiveCeeOhTwo::BAD, ADR_NON, &SixtyFiveCeeOhTwo::A_NON, 0, 0, 0), // 0xDC
 		OPCODE(OP_CMP, &SixtyFiveCeeOhTwo::CMP, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 4, 0), // 0xDD
 		OPCODE(OP_DEC, &SixtyFiveCeeOhTwo::DEC, ADR_ABX, &SixtyFiveCeeOhTwo::A_ABX, 2, 7, 0), // 0xDE
@@ -819,6 +823,8 @@ struct SixtyFiveCeeOhTwo
 	uint8_t TXS();
 	uint8_t TRB();
 	uint8_t TSB();
+  uint8_t STP();
+  uint8_t WAI();
 
   static constexpr uint8_t
       //LDA
@@ -1075,7 +1081,9 @@ struct SixtyFiveCeeOhTwo
       //misc
       INS_NOP = 0xEA,
       INS_BRK = 0x00,
-      INS_RTI = 0x40;
+      INS_RTI = 0x40,
+      INS_STP = 0xDB,
+      INS_WAI = 0xCB;
 };
 
 /**

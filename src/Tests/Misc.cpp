@@ -205,3 +205,59 @@ TEST_F(CpuTest, MaskedIRQ) {
 
 }
 
+TEST_F(CpuTest, INS_STP)
+{
+  A = randomByte() & 0x7F;
+  EXPECT_EQ(cpu.r.stopped, false);
+  code(SixtyFiveCeeOhTwo::INS_LDA_IM, A);
+  code(SixtyFiveCeeOhTwo::INS_STP);
+  // LDA
+  executeCycles(2);
+  expectRegisters(A, 0, 0, 0xFD);
+  // STP
+  executeCycles(3);
+  expectPC();
+  // is stopped?
+  EXPECT_EQ(cpu.r.stopped, true);
+  executeCycles(0);
+  expectPC();
+  // reset
+  cpu.reset_cpu();
+  expectRegisters(0, 0, 0, 0xFD);
+  // reset + LDA
+  executeCycles(9);
+  expectRegisters(A, 0, 0, 0xFD);
+}
+
+TEST_F(CpuTest, INS_WAI)
+{
+  A = randomByte() & 0x7F;
+  EXPECT_EQ(cpu.r.waiting, false);
+  code(SixtyFiveCeeOhTwo::INS_SEI);
+  code(SixtyFiveCeeOhTwo::INS_WAI);
+  code(SixtyFiveCeeOhTwo::INS_LDA_IM, A);
+  
+  // if interrupts are masked, and WAI is executed
+  // the cpu waits.  when an IRQ fires, then wait ends
+  // and the PC should move to the next op after the WAI
+  // and not the IRQ SVR
+  
+  // SEI
+  executeCycles(2);
+  // WAI
+  executeCycles(3);
+  
+  // no cycles execute
+  EXPECT_EQ(cpu.r.waiting, true);
+  executeCycles(0);
+  
+  // IRQ!
+  cpu.maskable_interrupt(this);
+  EXPECT_EQ(cpu.r.waiting, false);
+
+  // LDA
+  executeCycles(2);
+  expectRegisters(A, 0, 0, 0xFD);
+  expectPC();
+  
+}
