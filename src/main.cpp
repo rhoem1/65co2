@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		// the main loop
-		while (apple->running)
+		while (apple->running && !apple->cpu->r.stopped)
 		{
 			// run an op, get the cycles used
 			int cycles = apple->cpu->do_operation();
