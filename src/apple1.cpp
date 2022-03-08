@@ -20,53 +20,102 @@
  * (c) 2020 Robert Hoem
  *
  */
+#include <memory>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <termios.h>
 
 // emulation
 #include "apple1.h"
 
 AppleOne::AppleOne()
 {
-	cpu = new SixtyFiveCeeOhTwo();
-	ioPages = new romIntercept(cpu);
+	cpu = std::make_unique<SixtyFiveCeeOhTwo>();
+	ioPages = std::make_unique<romIntercept>(cpu.get());
 
-	piaKB = new memoryInterceptPIAKB(this);
-	piaKBcr = new memoryInterceptPIAKBcr(this);
-	piaDSP = new memoryInterceptPIADSP(this);
-	piaDSPcr = new memoryInterceptPIADSPcr(this);
+	pia = std::make_unique<memoryInterceptPIA>(this);
 
-	stopEmulation = new memoryInterceptStopEmulation(this);
-	cycleCounter = new memoryInterceptCycleCount(this);
-	miRNG = new memoryInterceptRNG(this);
+	stopEmulation = std::make_unique<memoryInterceptStopEmulation>(this);
+	miRNG = std::make_unique<memoryInterceptRNG>(this);
 
-	cpu->addInterceptRange(0xD000, 0x1000, ioPages);
+	cpu->addInterceptRange(0xD000, 0x1000, ioPages.get());
 
 	// wire up pia intercepts
-	cpu->addIntercept(0xD010, piaKB);
-	cpu->addIntercept(0xD011, piaKBcr);
-	cpu->addIntercept(0xD012, piaDSP);
-	cpu->addIntercept(0xD013, piaDSPcr);
+	cpu->addInterceptRange(0xD010, 0x4, pia.get());
 
-	cpu->addIntercept(0xCFFF, miRNG);
+	cpu->addIntercept(0xCFFF, miRNG.get());
 
-	cpu->addIntercept(0xD01F, stopEmulation);
+	cpu->addIntercept(0xD01F, stopEmulation.get());
 }
 
-AppleOne::~AppleOne()
+AppleOne::memoryInterceptStopEmulation::memoryInterceptStopEmulation(AppleOne *_apple)
 {
-	delete miRNG;
-	delete cycleCounter;
-	delete stopEmulation;
-	delete piaDSPcr;
-	delete piaDSP;
-	delete piaKBcr;
-	delete piaKB;
-	delete ioPages;
-	delete cpu;
+  apple = _apple;
+}
+unsigned char AppleOne::memoryInterceptStopEmulation::read(unsigned short address)
+{
+  apple->running = false;
+  return 0;
+}
+void AppleOne::memoryInterceptStopEmulation::write(unsigned char value, unsigned short address)
+{
+  apple->running = false;
 }
 
+AppleOne::memoryInterceptPIA::memoryInterceptPIA(AppleOne *_apple)
+{
+  apple = _apple;
+}
+unsigned char AppleOne::memoryInterceptPIA::read(unsigned short address)
+{
+  switch (address & 0x03)
+  {
+  // KB
+  case 0x0:
+    apple->checkKeyboard(true);
+    keycontrol = 0;
+    return keyin;
+  // KBcr
+  case 0x1:
+    apple->checkKeyboard(false);
+    return keycontrol;
+  case 0x2:
+    return 0; // always ready to accept a char
+  case 0x3:
+    return dspcontrol;
+  default:
+    return 0;
+  }
+}
 
+void AppleOne::memoryInterceptPIA::write(unsigned char value, unsigned short address)
+{
+  switch (address & 0x03)
+  {
+  case 0x0:
+    keyin = value;
+    break;
+  case 0x1:
+    keycontrol = value;
+    break;
+  case 0x2:
+    dspout = value;
+    apple->outputDsp(value);
+    break;
+  case 0x3:
+    dspcontrol = value;
+    break;
+  }
+}
+
+AppleOne::memoryInterceptRNG::memoryInterceptRNG(AppleOne *_apple)
+{
+  srand(time(NULL));
+  apple = _apple;
+}
+unsigned char AppleOne::memoryInterceptRNG::read(unsigned short address)
+{
+  return rand() & 0xFF;
+}
+void AppleOne::memoryInterceptRNG::write(unsigned char value, unsigned short address)
+{
+  srand(value);
+}

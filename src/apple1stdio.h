@@ -1,15 +1,36 @@
 
 // emulation
+#include <memory>
 #include "apple1.h"
+
 
 struct AppleOneStdio : public AppleOne
 {
 	bool debugging = false;
 	bool stepping = false;
-	bool quiet = false;
 
 	bool width40 = true;
 	int cursorX = 0;
+
+  // output during file load allowed
+  bool verbose = false;
+  // output allowed
+  bool quiet = false;
+
+  // keyboard check counter
+  const int MAX_KEYBOARD_CHECKS = 100;
+  int counter = 0;
+
+  struct memoryInterceptQuietOutput : memoryIntercept
+  {
+    AppleOneStdio *apple;
+    memoryInterceptQuietOutput(AppleOneStdio *_apple); 
+    virtual unsigned char read(unsigned short address);
+    virtual void write(unsigned char value, unsigned short address);
+  };
+  std::unique_ptr<memoryInterceptQuietOutput> quietOutput;
+
+  AppleOneStdio();
 
 	/**
 	 * output something to stdout from DSP
@@ -41,4 +62,7 @@ struct AppleOneStdio : public AppleOne
 	 * and when KB is accessed
 	 */
 	void checkKeyboard(bool reading) override;
+  
+  void flush();
+  
 };

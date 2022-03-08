@@ -12,6 +12,9 @@
 #include "Roms/krusader13.h"
 #include "Roms/applesoft_lite_0_4.h"
 #include "Roms/msbasic.h"
+
+const uint64_t MAX_CYCLES_PER_FLUSH = 2*1024*1024/8;
+
 int main(int argc, char *argv[])
 {
 
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 
 	// process command line
 	int c;
-	while ((c = getopt(argc, argv, "qabkmdsrw")) != -1)
+	while ((c = getopt(argc, argv, "qvabkmdsrw")) != -1)
 		switch (c)
 		{
 		case 'a':
@@ -79,6 +82,10 @@ int main(int argc, char *argv[])
 		case 'q':
 			apple->quiet = true;
 			break;
+      
+    case 'v':
+      apple->verbose = true;
+      break;
 
 		case 'd':
 			apple->debugging = true;
@@ -93,7 +100,8 @@ int main(int argc, char *argv[])
 			printf("  -b start Woz Basic\n");
 			printf("  -k install Krusader13 @ F000\n");
 			printf("  -m install MSBasic @ 400\n");
-			printf("  -q quiet until file loaded\n");
+			printf("  -v verbose while file loaded\n");
+      printf("  -q quiet mode");
 			printf("  -w turn off 40 col mode\n");
 
 			printf("  -d turn on opcode trace\n");
@@ -154,6 +162,8 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
+  
+  uint64_t cyclecount = 0;
 
 	// display initial cpu state
 	if (apple->debugging)
@@ -165,9 +175,6 @@ int main(int argc, char *argv[])
 		{
 			// run an op, get the cycles used
 			int cycles = apple->cpu->do_operation();
-
-			// pass the cycles used to things that need to know
-			apple->cycleCounter->update(cycles);
 
 			// check the keyboard hardware
 			apple->checkKeyboard(false);
@@ -206,9 +213,11 @@ int main(int argc, char *argv[])
 		{
 			// run an op, get the cycles used
 			int cycles = apple->cpu->do_operation();
-
-			// pass the cycles used to things that need to know
-			apple->cycleCounter->update(cycles);
+      cyclecount += cycles;
+      if(cyclecount > MAX_CYCLES_PER_FLUSH) {
+        cyclecount = 0;
+        apple->flush();
+      }
 
 			// check the keyboard hardware
 			apple->checkKeyboard(false);

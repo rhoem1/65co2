@@ -2,11 +2,26 @@
 #include "apple1.h"
 #include "apple1stdio.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <termios.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
+AppleOneStdio::AppleOneStdio()
+{
+  quietOutput = std::make_unique<memoryInterceptQuietOutput>(this);
+	cpu->addIntercept(0xD01E, quietOutput.get());
+}
 void AppleOneStdio::outputDsp(unsigned char value) 
 {
 
 	// only quiet during file load
-	quiet = quiet && (fpLoadFile != NULL);
+  if (fpLoadFile != NULL && !verbose)
+    return;
 
 	if (quiet)
 		return;
@@ -25,7 +40,6 @@ void AppleOneStdio::outputDsp(unsigned char value)
 			// Backspace, del, underline
 			// apple 1 used underline for backspace
 			printf("%c %c", 0x08, 0x08);
-			fflush(stdout);
 			cursorX--;
 			break;
 
@@ -33,22 +47,30 @@ void AppleOneStdio::outputDsp(unsigned char value)
 			break;
 		case 0x0D:
 			// End of Line
-			printf("\r\n");
 			cursorX = 0;
+			printf("\r\n");
+      flush();
 			break;
 		default:
 			// Character
 			printf("%c", value);
-			fflush(stdout);
 			cursorX++;
 			break;
 	}
-	if (cursorX == 40)
-	{
-		cursorX = 0;
-		if (width40)
-			printf("\r\n");
-	}
+  if (width40)
+  {
+    if (cursorX == 40)
+    {
+      cursorX = 0;
+      printf("\r\n");
+      flush();
+    }
+  }
+}
+void AppleOneStdio::flush()
+{
+  fflush(stdout);
+  usleep(1);
 }
 void AppleOneStdio::readFile(char *filename)
 {
@@ -106,14 +128,14 @@ void AppleOneStdio::checkKeyboard(bool reading)
 {
 	unsigned char c = 0;
 
-	// if we're reading from a file
+  // if we're reading from a file
 	if (fpLoadFile)
 	{
 		// if still something left
 		if (!feof(fpLoadFile))
 		{
 			// set KBcr to character available
-			piaKBcr->reg = 0xA7;
+			pia->keycontrol = 0xA7;
 			// did we request a read?
 			if (reading)
 			{
@@ -130,15 +152,27 @@ void AppleOneStdio::checkKeyboard(bool reading)
 				}
 				c |= 0x80;
 			}
-		}
+    }
 	}
 	else
 	{
+    if(!reading) {
+      counter = MAX_KEYBOARD_CHECKS;
+    }
+    else
+    {
+      counter--;
+      if (counter == 0)
+      {
+        flush();
+        counter = MAX_KEYBOARD_CHECKS;
+      }
+    }
 
 		if (getKeyboardReady())
 		{
 			// set KBcr to character available
-			piaKBcr->reg = 0xA7;
+			pia->keycontrol = 0xA7;
 
 			// this only works when we're reading
 			if (reading)
@@ -154,22 +188,20 @@ void AppleOneStdio::checkKeyboard(bool reading)
 					while (getKeyboardReady())
 						keyboardBuffer += getKeyboardData();
 
-					// F12 to break
-					if (keyboardBuffer == "[24~")
+          // F2 to reset
+          if (keyboardBuffer == "OQ")
+          {
+            cpu->reset_cpu();
+            return;
+          }
+					// F3 to break
+					if (keyboardBuffer == "OR")
 					{
-						c = 0;
 						cpu->non_maskable_interrupt();
+            return;
 					}
-					else
-						// F2 to reset
-						if (keyboardBuffer == "OQ")
-						{
-							c = 0;
-							cpu->reset_cpu();
-						}
-						else
-							c |= 0x80;
-				}
+          c |= 0x80;
+        }
 				else
 				{
 
@@ -195,6 +227,20 @@ void AppleOneStdio::checkKeyboard(bool reading)
 	}
 	if (c > 127)
 	{ // if we set bit 8, update KB
-		piaKB->reg = c;
-	}
+		pia->keyin = c;
+    flush();
+  }
+}
+
+AppleOneStdio::memoryInterceptQuietOutput::memoryInterceptQuietOutput(AppleOneStdio *_apple)
+{
+  apple = _apple;
+}
+unsigned char AppleOneStdio::memoryInterceptQuietOutput::read(unsigned short address)
+{
+  return apple->quiet ? 0x80 : 0x00;
+}
+void AppleOneStdio::memoryInterceptQuietOutput::write(unsigned char value, unsigned short address)
+{
+  apple->quiet = value != 0x00;
 }

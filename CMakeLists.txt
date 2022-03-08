@@ -5,8 +5,8 @@ project(SixtyFiveCeeOhTwo VERSION 1.0)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-# GoogleTest requires at least C++11
-set(CMAKE_CXX_STANDARD 11)
+# GoogleTest requires at least C++14
+set(CMAKE_CXX_STANDARD 14)
 
 include(FetchContent)
 FetchContent_Declare(

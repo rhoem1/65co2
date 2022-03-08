@@ -1,1 +1,2 @@
 10 PRINT CHR$(47 + ABS(RND(1) > .5) * 45);: GOTO 10
+RUN
