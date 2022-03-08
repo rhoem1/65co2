@@ -1,42 +1,23 @@
-65co2 cpu emulation
-rhoem1@gmail.com
-Robert Hoem
+65co2 cpu emulation with googletest unit tests suite
 
-using c++
-
-
-object oriented
-uses table lookup for opcode -> addressing mode, operation, etc
-as few function calls per opcode as possible
-memory intercepts via table for fast chip interconnect
-cycle accurate, memory access accurate
-
-example usage is an apple1 emulator, which includes several different
-BASIC interperters and the Krusader v1.3 assembler.
+This project uses the emulation in an apple1 emulator, which includes several different BASIC interperters and the Krusader v1.3 assembler.
 
 Requirements
-printf for the cpu state print method.
-c++ that supports c++11
-
-the apple 1 emulation uses a raw io mode to catch f2 and f12
+Posix, c++ that supports c++14 or newer, cmake
 
 apple1 [-abkmqdsw] [loadfile]
   -a install ApplesoftLite @ E000
   -b start Woz Basic
   -k install Krusader13 @ F000
   -m install MSBasic @ 400
-  -q quiet until file loaded
-                                        
+	-v verbose output
+  -q quiet mode on
   -d turn on opcode trace
   -s turn on opcode trace in step mode
                                         
-  -w turn off 40col width limitation
- ctrl-c to quit, f2 to reset, f12 to nmi
+  -w turn off 40 column width limitation
 
-The BASIC interperters are converted from .bin using a PHP script
-They act like ROM and allow the emulation to not require the .bin
-files.
-
+ ctrl-c to quit, f2 to reset, f3 to nmi
 
 The version of msbasic is derived from the msbasic project 
 with modifications to allow it to workon an apple1.  It is mostly
@@ -55,16 +36,11 @@ http://pom1.sourceforge.net/
 
 Differences from the Apple 1:
 
-The entire $D000 block is marked read-only.
-
+$C000 block is ram
+$CFFF returns a random number 0-255
 I/O PIA is at $D010 to $D013 only and is not replicated through all of the 
 $D000 block
+$D01E toggle output
+$D01F quit emulation
 
-$D01F cycle count
-read to get current cycle count  limited to 0-255
-write to set value
-
-$DFFF quit emulation
-read/write to exit emulation
-POKE 57343,0 or POKE -8193,0 will exit the emulation
-
+Unit tests via GoogleTest
