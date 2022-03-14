@@ -69,6 +69,7 @@ void AppleOneStdio::outputDsp(unsigned char value)
 }
 void AppleOneStdio::flush()
 {
+  if(quiet) return;
   fflush(stdout);
   usleep(1);
 }

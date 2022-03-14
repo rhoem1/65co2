@@ -218,9 +218,12 @@ int main(int argc, char *argv[])
         cyclecount = 0;
         apple->flush();
       }
+      
+      // check the keyboard once every 4096 cycles
+      if(!apple->quiet && (cyclecount & 0x0800))
+        // check the keyboard hardware
+        apple->checkKeyboard(false);
 
-			// check the keyboard hardware
-			apple->checkKeyboard(false);
 		}
 	}
 
