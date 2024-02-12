@@ -155,13 +155,17 @@ int main(int argc, char *argv[])
 		// if we are then change io to RAW
 		save = tp;
 
+
+
 		// make a lot of the input raw, catch ctrl-c for break
 
-		tp.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON);
-		tp.c_oflag &= ~OPOST;
-		tp.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN);
-		tp.c_cflag &= ~(CSIZE | PARENB);
+    tp.c_iflag |= IGNBRK;
+    tp.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF | ISTRIP | IGNCR | ICRNL);
+    tp.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
+    tp.c_cc[VMIN] = 1;
+    tp.c_cc[VTIME] = 0;
 		tp.c_cflag |= CS8;
+		tp.c_cflag &= ~(OPOST | CSIZE | PARENB);
 
 		if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &tp) == -1)
 		{

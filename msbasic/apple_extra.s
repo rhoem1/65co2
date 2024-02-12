@@ -1,77 +1,7 @@
 .segment "EXTRA"
 
-.ifdef APPLE1
-
-
-; GETchar from wozmon, mostly
-MONRDKEY:
-        lda     KBcr     
-        bpl     MONRDKEY
-        lda     KBin    ; get key
-        rts
-
-MONRDLINE:
-        stx     $33
-        ldx     #0
-        jmp     APPLENEXTCHAR
-NOTCR:
-        cmp     #$DF
-        beq     APPLEBACKSPACE
-        inx     
-        bne     APPLENEXTCHAR
-        ; reset input if we hit 255 chars
-        lda     #$DC
-        jsr     MONCOUT
-APPLEGETLINE:
-        lda     #$8D
-        jsr     MONCOUT
-
-        ldx     #$01
-APPLEBACKSPACE:
-        dex
-        bmi     APPLEGETLINE
-APPLENEXTCHAR:
-        jsr     MONRDKEY
-        sta     INPUTBUFFER,x
-        jsr     MONCOUT
-        cmp     #$8D
-        bne     NOTCR
-; replace CR with a 0, strip high bit
-        ldx     #$00
-L2907:
-        lda     INPUTBUFFER,x
-        and     #$7F
-        cmp     #$0D
-        bne     L2912
-        lda     #$00
-L2912:
-        sta     INPUTBUFFER,x
-        inx
-        bne     L2907
-        ldx     $33
-        rts
-
-INLINX:
-        jsr     OUTQUES
-        jsr     OUTSP
-        ldx     #$80
-        jmp     INLIN1
-
-USR_FUNC:
-        jsr     L29DA
-        lda     FAC+3
-        sta     FAC+5
-        jmp     (FAC+4)
-L29DA:
-        jmp     (GOAYINT)
-
-.endif
-
-
-
-
-.ifdef APPLE_2
-MONRDLINE:
+        .byte   0,0,0
+L2900:
         jsr     LFD6A
         stx     $33
         ldx     #$00
@@ -87,11 +17,6 @@ L2912:
         bne     L2907
         ldx     $33
         rts
-
-
-
-        .byte   0,0,0
-
 PLT:
         jmp     L29F0
 L291E:
@@ -155,7 +80,6 @@ L297F:
 L2988:
         dex
         beq     L2930
-		
 INLINX:
         jsr     OUTQUES
         jsr     OUTSP
@@ -165,8 +89,6 @@ INLINX:
         .byte   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
         .byte   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
         .byte   0,0,0,0,0,0,0,0,0,0
-
-
 USR_FUNC:
         jsr     L29DA
         lda     FAC+3
@@ -174,14 +96,12 @@ USR_FUNC:
         jmp     (FAC+4)
 L29DA:
         jmp     (GOAYINT)
-
         brk
         brk
         brk
 L29E0:
         pla
         jmp     LFB40
-
         .byte   0,0,0,0,0,0,0,0,0,0,0,0
 L29F0:
         pha
@@ -206,7 +126,3 @@ L2A0E:
         jmp     (GOGIVEAYF)
 ; ----------------------------------------------------------------------------
         .byte   0,0,0,0,0,0
-
-
-.endif
-

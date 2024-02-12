@@ -95,29 +95,24 @@ POKE:
 ; "WAIT" STATEMENT
 ; ----------------------------------------------------------------------------
 WAIT:
-        jsr     FRMNUM
-
-        lda     FACSIGN
-        lda     FAC
-        cmp     #$91
-        jcs     GOIQ
-        jsr     QINT
-        ldy     FAC_LAST-1
-
-WAIT1:
-		ldx FAC_LAST   ; innermost loop is 256
-WAIT2:
-		lda KBcr   ; 4
-		beq WAIT3  ; 3 - if keycheck is 0, it'd be A7 if a key was waiting
-		lda KBin   ; 4 - prev is 2
-WAIT3:
-		dex        ; 2
-		bne WAIT2  ; 3 till x = 0
-
-WAIT4:
-		dey        ; as long as linnum > 0
-		bne WAIT1
-
+        jsr     GTNUM
+        stx     FORPNT
+        ldx     #$00
+        jsr     CHRGOT
+.ifdef CONFIG_EASTER_EGG
+        beq     EASTER_EGG
+.else
+        beq     L3628
+.endif
+        jsr     COMBYTE
+L3628:
+        stx     FORPNT+1
+        ldy     #$00
+L362C:
+        lda     (LINNUM),y
+        eor     FORPNT+1
+        and     FORPNT
+        beq     L362C
 RTS3:
         rts
-.endif ;/* KBD */
+.endif

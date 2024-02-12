@@ -10,3 +10,4 @@ Testing
 *.a
 Makefile
 
+msbasic/tmp/

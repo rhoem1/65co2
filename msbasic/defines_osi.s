@@ -13,6 +13,7 @@ ZP_START2 = $0D
 ZP_START3 = $5B
 ZP_START4 = $65
 
+ZP_INPUTBUFFER  := 1
 ;extra ZP variables
 USR             := $000A
 

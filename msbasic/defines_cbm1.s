@@ -23,6 +23,8 @@ TISTR			:= $0200
 Z96				:= $020C
 USR				:= GORESTART
 
+ZP_INPUTBUFFER  := 1
+
 ; constants
 SPACE_FOR_GOSUB := $36
 STACK_TOP		:= $FC

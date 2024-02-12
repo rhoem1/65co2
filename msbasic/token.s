@@ -10,22 +10,22 @@
 		keyword_rts "INPUT", INPUT
 		keyword_rts "DIM", DIM
 		keyword_rts "READ", READ
-;.ifdef APPLE
-		;keyword_rts "PLT", PLT
-;.else
+.ifdef APPLE
+		keyword_rts "PLT", PLT
+.else
 		keyword_rts "LET", LET
-;.endif
+.endif
 		keyword_rts "GOTO", GOTO, TOKEN_GOTO
 		keyword_rts "RUN", RUN
 		keyword_rts "IF", IF
 		keyword_rts "RESTORE", RESTORE
 		keyword_rts "GOSUB", GOSUB, TOKEN_GOSUB
 		keyword_rts "RETURN", POP
-;.ifdef APPLE
-		;keyword_rts "TEX", TEX, TOKEN_REM
-;.else
+.ifdef APPLE
+		keyword_rts "TEX", TEX, TOKEN_REM
+.else
 		keyword_rts "REM", REM, TOKEN_REM
-;.endif
+.endif
 		keyword_rts "STOP", STOP
 		keyword_rts "ON", ON
 .ifdef CONFIG_NULL
@@ -41,8 +41,8 @@
 		keyword_rts "WAIT", WAIT
 .endif
 .ifndef KBD
-		;keyword_rts "LOAD", LOAD
-		;keyword_rts "SAVE", SAVE
+		keyword_rts "LOAD", LOAD
+		keyword_rts "SAVE", SAVE
 .endif
 .ifdef CONFIG_CBM_ALL
 		keyword_rts "VERIFY", VERIFY
@@ -116,7 +116,7 @@ UNFNC:
   .ifdef CONFIG_RAM
 		keyword_addr "USR", IQERR
   .else
-		keyword_addr "USR", USR
+		keyword_addr "USR", USR, TOKEN_USR
   .endif
 .endif
 		keyword_addr "FRE", FRE
