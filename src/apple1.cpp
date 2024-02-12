@@ -21,6 +21,7 @@
  *
  */
 #include <memory>
+#include <random>
 
 
 // emulation
