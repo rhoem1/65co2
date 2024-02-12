@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
 	// process command line
 	int c;
-	while ((c = getopt(argc, argv, "qvabkmdsrw")) != -1)
+	while ((c = getopt(argc, argv, "qvabkmdsrwl8")) != -1)
 		switch (c)
 		{
 		case 'a':
@@ -74,6 +74,13 @@ int main(int argc, char *argv[])
 		case 'w':
 			apple->width40 = false;
 			break;
+    case 'l':
+      apple->alwaysUppercase = false;
+      break;
+    case '8':
+      apple->eightBitOutput = true;
+      break;
+
 
 		case 'r':
 			loadRoms = false;

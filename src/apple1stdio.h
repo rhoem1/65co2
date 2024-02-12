@@ -1,6 +1,7 @@
 
 // emulation
 #include <memory>
+#include <string>
 #include "apple1.h"
 
 
@@ -9,7 +10,9 @@ struct AppleOneStdio : public AppleOne
 	bool debugging = false;
 	bool stepping = false;
 
+  bool eightBitOutput = false;
 	bool width40 = true;
+  bool alwaysUppercase = true;
 	int cursorX = 0;
 
   // output during file load allowed

@@ -26,11 +26,10 @@ void AppleOneStdio::outputDsp(unsigned char value)
 	if (quiet)
 		return;
 
-	// ignore any value that does not have bit 8 set
-	if (value == 0x7F)
-		return;
+	//if (value == 0x7F) return;
 
-	value &= 0x7F;
+  if(!eightBitOutput)
+    value &= 0x7F;
 
 	switch (value)
 	{
@@ -141,7 +140,8 @@ void AppleOneStdio::checkKeyboard(bool reading)
 			if (reading)
 			{
 				c = fgetc(fpLoadFile);
-				c = toupper(c);
+        if(alwaysUppercase)
+          c = toupper(c);
 				if (c == 0x0A) // turn line feeds into carriage returns
 					c = 0x0D;
 				if (feof(fpLoadFile))
@@ -216,8 +216,10 @@ void AppleOneStdio::checkKeyboard(bool reading)
 						case 0x08:
 							c = 0x5F;
 							break;
-						default: // uppercase it
-							c = toupper(c);
+						default: 
+              // uppercase it
+              if(alwaysUppercase)
+                c = toupper(c);
 							break;
 					}
 
