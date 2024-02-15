@@ -150,6 +150,7 @@ void AppleOneStdio::checkKeyboard(bool reading)
 					fclose(fpLoadFile);
 					fpLoadFile = NULL;
 					c = 0x0D; // end of file, always return a carriage return
+          goInteractive();
 				}
 				c |= 0x80;
 			}
@@ -233,6 +234,39 @@ void AppleOneStdio::checkKeyboard(bool reading)
 		pia->keyin = c;
     flush();
   }
+}
+void AppleOneStdio::goInteractive()
+{
+	// check if we are interactive or not
+	if (tcgetattr(STDIN_FILENO, &tp) == -1)
+	{
+    return;
+	}
+  if(interactive)
+    return;
+  // if we are then change io to RAW
+  save = tp;
+  // make a lot of the input raw, catch ctrl-c for break
+
+  tp.c_iflag |= IGNBRK;
+  tp.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF | ISTRIP | IGNCR );
+  tp.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
+  tp.c_cc[VMIN] = 1;
+  tp.c_cc[VTIME] = 0;
+  tp.c_cflag |= CS8;
+  tp.c_cflag &= ~(OPOST | CSIZE | PARENB);
+
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &tp) == -1)
+  {
+    printf("could not set term attributes\n");
+  }
+  interactive = true;
+}
+
+void AppleOneStdio::leaveInteractive()
+{
+		tcsetattr(STDIN_FILENO, TCSANOW, &save);
+    interactive = false;
 }
 
 AppleOneStdio::memoryInterceptQuietOutput::memoryInterceptQuietOutput(AppleOneStdio *_apple)

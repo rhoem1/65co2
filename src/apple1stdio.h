@@ -2,6 +2,8 @@
 // emulation
 #include <memory>
 #include <string>
+#include <unistd.h>
+#include <termios.h>
 #include "apple1.h"
 
 
@@ -23,6 +25,8 @@ struct AppleOneStdio : public AppleOne
   // keyboard check counter
   const int MAX_KEYBOARD_CHECKS = 100;
   int counter = 0;
+
+	struct termios tp, save;
 
   struct memoryInterceptQuietOutput : memoryIntercept
   {
@@ -68,4 +72,8 @@ struct AppleOneStdio : public AppleOne
   
   void flush();
   
+	bool interactive = false;
+  void goInteractive();
+  void leaveInteractive();
+
 };

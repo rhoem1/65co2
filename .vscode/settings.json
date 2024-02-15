@@ -2,5 +2,6 @@
   "C_Cpp.errorSquiggles": "Disabled",
   "files.associations": {
     "limits": "cpp"
-  }
+  },
+  "cmake.configureOnOpen": true
 }

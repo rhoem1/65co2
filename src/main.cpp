@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
+#include <string>
 
 #include "apple1.h"
 #include "apple1stdio.h"
@@ -15,12 +16,18 @@
 
 const uint64_t MAX_CYCLES_PER_FLUSH = 2*1024*1024/8;
 
+void addMsBasic(AppleOneStdio *apple, memoryInterceptMSBasic *MSBasic)
+{
+  // mix in MSBasic
+  apple->cpu->addInterceptRange(MSBASIC, MSBASIC_LENGTH, MSBasic);
+  apple->cpu->setPC(MSBASIC);
+  apple->width40 = false;
+}
+
 int main(int argc, char *argv[])
 {
+  std::string appName(argv[0]);
 
-	bool interactive = true;
-
-	struct termios tp, save;
 
 	// create computer emulation
 	AppleOneStdio *apple = new AppleOneStdio();
@@ -58,6 +65,7 @@ int main(int argc, char *argv[])
 			// mix in Applesoft Lite
 			apple->cpu->addInterceptRange(APPLESOFTLITE, APPLESOFTLITE_LENGTH, &ApplesoftLiteRom);
 			apple->cpu->setPC(APPLESOFTLITE);
+      loadRoms = false;
 			break;
 		case 'b': // start in basic
 			apple->cpu->setPC(BASIC);
@@ -66,10 +74,7 @@ int main(int argc, char *argv[])
 			apple->cpu->setPC(KRUSADER);
 			break;
 		case 'm':
-			// mix in MSBasic
-			apple->cpu->addInterceptRange(MSBASIC, MSBASIC_LENGTH, &MSBasic);
-			apple->cpu->setPC(MSBASIC);
-			apple->width40 = false;
+      addMsBasic(apple, &MSBasic);
 			break;
 		case 'w':
 			apple->width40 = false;
@@ -80,20 +85,15 @@ int main(int argc, char *argv[])
     case '8':
       apple->eightBitOutput = true;
       break;
-
-
 		case 'r':
 			loadRoms = false;
 			break;
-
 		case 'q':
 			apple->quiet = true;
 			break;
-      
     case 'v':
       apple->verbose = true;
       break;
-
 		case 'd':
 			apple->debugging = true;
 			break;
@@ -121,6 +121,11 @@ int main(int argc, char *argv[])
 			abort();
 		}
 
+  size_t s = appName.find("msbasic");
+
+  if(s < appName.length())
+      addMsBasic(apple, &MSBasic);
+
 	if (optind > 0)
 	{
 		filename = argv[optind];
@@ -141,39 +146,11 @@ int main(int argc, char *argv[])
 	{
 		apple->readFile(filename);
 		printf("Loading %s\n", filename);
-	}
+	} 
 
-	// check if we are interactive or not
-	interactive = true;
-	if (tcgetattr(STDIN_FILENO, &tp) == -1)
-	{
-		interactive = false;
-	}
-
-	if (interactive)
-	{
-		// if we are then change io to RAW
-		save = tp;
+  apple->goInteractive();
 
 
-
-		// make a lot of the input raw, catch ctrl-c for break
-
-    tp.c_iflag |= IGNBRK;
-    tp.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF | ISTRIP | IGNCR | ICRNL);
-    tp.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
-    tp.c_cc[VMIN] = 1;
-    tp.c_cc[VTIME] = 0;
-		tp.c_cflag |= CS8;
-		tp.c_cflag &= ~(OPOST | CSIZE | PARENB);
-
-		if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &tp) == -1)
-		{
-			printf("could not set term attributes\n");
-			exit(1);
-		}
-	}
-  
   uint64_t cyclecount = 0;
 
 	// display initial cpu state
@@ -242,8 +219,7 @@ int main(int argc, char *argv[])
 	// all done? time to clean up
 
 	// reset io mode back to whatever it was when we started
-	if (interactive)
-		tcsetattr(STDIN_FILENO, TCSANOW, &save);
+  apple->leaveInteractive();
 
 	return 0;
 }
