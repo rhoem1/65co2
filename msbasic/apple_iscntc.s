@@ -11,14 +11,14 @@ L0ECC:
 .else
 ISCNTC:
         lda KBcr     
-        bpl not_cntc 
+        bpl NOT_CNTC 
         jsr MONRDKEY
         and #$7F
         cmp #3
-        beq is_cntc
-not_cntc:
+        beq IS_CNTC
+NOT_CNTC:
         rts
 
-is_cntc:
+IS_CNTC:
 .endif
 ;!!! runs into "STOP"

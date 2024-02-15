@@ -52,6 +52,11 @@ APPLEBACKSPACELIM:
         beq     APPLELINELIM
 
 APPLENOTBACKSPACE:
+        cmp     #$3     ; CTRL-C
+        bne APPLENOTCTRLC
+        jmp     IS_CNTC
+
+APPLENOTCTRLC:
         jsr     MONCOUT       ; show it
         ; store it
         sta     INPUTBUFFER,x 
