@@ -1,8 +1,120 @@
 .segment "EXTRA"
 
-        .byte   0,0,0
-L2900:
+.ifdef APPLE1
+
+EXITEMU:
+      lda $D01f
+      rts
+
+; GETchar from wozmon, mostly
+MONRDKEY:
+        lda     KBcr     
+        bpl     MONRDKEY
+        lda     KBin    ; get key
+        rts
+
+MONRDLINE:
+        stx     $33   ; save X
+
+;X = 0
+;WHILE A != CR DO
+  ; A = GETCH
+  ; COUT
+  ; IF A = BS THEN
+    ; X--
+    ; IF X < 0 THEN
+      ; BEEP
+      ; X = 0
+      ; CONTINUE
+  ; IF A != CR THEN
+    ; INPUTBUFFER,X = A
+    ; X++
+    ; IF X > 240 THEN
+      ; BEEP
+      ; X = 240
+      ; CONTINUE
+; INPUTBUFFER,X = 0
+
+        ldx     #0
+APPLENEXTCHAR:
+        jsr     MONRDKEY      ; get a key
+        and     #$7F
+
+        cmp     #$5F           ; backspace/underline?
+        bne     APPLENOTBACKSPACE
+
+        dex
+        bmi     APPLEBACKSPACELIM  ; < 0?
+        jsr     MONCOUT       ; show it
+        jmp     APPLENEXTCHAR
+APPLEBACKSPACELIM:
+        ldx     #0
+        beq     APPLELINELIM
+
+APPLENOTBACKSPACE:
+        jsr     MONCOUT       ; show it
+        ; store it
+        sta     INPUTBUFFER,x 
+        inx                 
+
+        cmp     #$0D    ; Was CR?
+        beq     APPLEHASCR   
+
+        ; input length limit
+        txa
+        cmp     #$EF
+        bcc     APPLENEXTCHAR
+
+APPLELINELIM:
+        lda     #$07     ; output a BELL
+        jsr     MONCOUT
+        jmp     APPLENEXTCHAR
+
+
+APPLEHASCR:
+        dex
+        lda #0
+        sta INPUTBUFFER,x
+
+; replace CR with a 0, strip high bit
+;        ldx     #0
+;L2907:
+;        lda     INPUTBUFFER,x
+;        and     #$7F
+;        cmp     #$0D
+;        bne     L2912
+;        lda     #$00
+;L2912:
+;        sta     INPUTBUFFER,x
+;        inx
+;        bne     L2907
+
+        ; return to sender
+        ldx     $33
+        rts
+
+INLINX:
+        jsr     OUTQUES
+        jsr     OUTSP
+        jmp     INLIN
+
+USR_FUNC:
+        jsr     L29DA
+        lda     FAC+3
+        sta     FAC+5
+        jmp     (FAC+4)
+L29DA:
+        jmp     (GOAYINT)
+
+.endif
+
+
+
+
+.ifdef APPLE_2
+MONRDLINE:
         jsr     LFD6A
+        ; turn CR to a #$00
         stx     $33
         ldx     #$00
 L2907:
@@ -16,7 +128,13 @@ L2912:
         inx
         bne     L2907
         ldx     $33
+        ; done
         rts
+
+
+
+        .byte   0,0,0
+
 PLT:
         jmp     L29F0
 L291E:
@@ -80,6 +198,7 @@ L297F:
 L2988:
         dex
         beq     L2930
+		
 INLINX:
         jsr     OUTQUES
         jsr     OUTSP
@@ -89,6 +208,8 @@ INLINX:
         .byte   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
         .byte   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
         .byte   0,0,0,0,0,0,0,0,0,0
+
+
 USR_FUNC:
         jsr     L29DA
         lda     FAC+3
@@ -96,12 +217,14 @@ USR_FUNC:
         jmp     (FAC+4)
 L29DA:
         jmp     (GOAYINT)
+
         brk
         brk
         brk
 L29E0:
         pla
         jmp     LFB40
+
         .byte   0,0,0,0,0,0,0,0,0,0,0,0
 L29F0:
         pha
@@ -126,3 +249,7 @@ L2A0E:
         jmp     (GOGIVEAYF)
 ; ----------------------------------------------------------------------------
         .byte   0,0,0,0,0,0
+
+
+.endif
+

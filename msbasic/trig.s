@@ -1,6 +1,5 @@
 .segment "CODE"
 
-.ifndef SYM1
 SIN_COS_TAN_ATN:
 ; ----------------------------------------------------------------------------
 ; "COS" FUNCTION
@@ -116,6 +115,8 @@ POLY_SIN:
         .byte   $07,$FB,$F8,$87,$99,$68,$89,$01
         .byte   $87,$23,$35,$DF,$E1,$86,$A5,$5D
         .byte   $E7,$28,$83,$49,$0F,$DA,$A2
+
+.ifdef INCLUDE_EASTER_EGG_TEXT
   .ifndef CONFIG_11
 ; no easter egg text before BASIC 1.1
   .elseif !.def(CONFIG_2A)
@@ -130,8 +131,7 @@ MICROSOFT:
         .byte   $89,$CD
   .endif
 .endif
-
-.ifndef AIM65
+.endif
 ; ----------------------------------------------------------------------------
 ; "ATN" FUNCTION
 ; ----------------------------------------------------------------------------
@@ -200,6 +200,4 @@ POLY_ATN:
 
 .if .def(CONFIG_11A) && (!.def(CONFIG_2))
 		.byte	$00 ; XXX
-.endif
-.endif
 .endif

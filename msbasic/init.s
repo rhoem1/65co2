@@ -7,22 +7,15 @@ FNDLIN2:
 .endif
 
 ; ----------------------------------------------------------------------------
-PR_WRITTEN_BY:
-.ifndef KBD
-  .ifndef CONFIG_CBM_ALL
-    .ifndef AIM65
-      .ifndef SYM1
-        lda     #<QT_WRITTEN_BY
-        ldy     #>QT_WRITTEN_BY
-        jsr     STROUT
-      .endif
-    .endif
-  .endif
-.endif
+;PR_WRITTEN_BY:
+;.ifndef KBD
+  ;.ifndef CONFIG_CBM_ALL
+        ;lda     #<QT_WRITTEN_BY
+        ;ldy     #>QT_WRITTEN_BY
+        ;jsr     STROUT
+  ;.endif
+;.endif
 COLD_START:
-.ifdef SYM1
-        jsr     ACCESS
-.endif
 .ifdef KBD
         lda     #<LFD81
         sta     $03A0
@@ -36,13 +29,11 @@ COLD_START:
         sta     $05
 .else
   .ifndef CBM2
-        ldx     #$FF
+        ldx     #$FF     ; set direct mode flag
         stx     CURLIN+1
   .endif
   .ifdef CONFIG_NO_INPUTBUFFER_ZP
         ldx     #$FB
-  .elseif .def(AIM65)
-        ldx     #$FE
   .endif
         txs
   .ifndef CONFIG_CBM_ALL
@@ -50,7 +41,6 @@ COLD_START:
         ldy     #>COLD_START
         sta     GORESTART+1
         sty     GORESTART+2
-    .ifndef AIM65
         sta     GOSTROUT+1
         sty     GOSTROUT+2
         lda     #<AYINT
@@ -61,30 +51,18 @@ COLD_START:
         ldy     #>GIVAYF
         sta     GOGIVEAYF
         sty     GOGIVEAYF+1
-    .endif
   .endif
         lda     #$4C
   .ifdef CONFIG_CBM_ALL
         sta     JMPADRS
   .endif
         sta     GORESTART
-  .ifdef AIM65
-        sta     JMPADRS
-        sta     ATN
-        sta     GOSTROUT
-  .else
   .ifndef CONFIG_CBM_ALL
         sta     GOSTROUT
         sta     JMPADRS
   .endif
-  .ifdef SYM1
-        sta     USR1
-        sta     USR3
-        sta     USR2
-  .endif
   .if (!.def(CONFIG_RAM)) && (!.def(CONFIG_CBM_ALL))
         sta     USR
-  .endif
   .endif
 
   .ifndef CONFIG_RAM
@@ -95,27 +73,8 @@ COLD_START:
           lda     #<IQERR
           ldy     #>IQERR
     .endif
-    .ifdef AIM65
-          sta     ATN+1
-          sty     ATN+2
-          sta     GOSTROUT+1
-          sty     GOSTROUT+2
-    .else
           sta     USR+1
           sty     USR+2
-      .ifdef SYM1
-          sta     USR1+1
-          sty     USR1+2
-          lda     #<DUMPT
-          ldy     #>DUMPT
-          sta     USR2+1
-          sty     USR2+2
-          lda     #<L8C78
-          ldy     #>L8C78
-          sta     USR3+1
-          sty     USR3+2
-      .endif
-    .endif
   .endif
   .ifndef CBM1
         lda     #WIDTH
@@ -123,7 +82,7 @@ COLD_START:
         lda     #WIDTH2
         sta     Z18
   .endif
-.endif
+.endif ;/* KBD */
 
 ; All non-CONFIG_SMALL versions of BASIC have
 ; the same bug here: While the number of bytes
@@ -159,6 +118,7 @@ L4098:
         lda     #$03
         sta     DSCLEN
 .endif
+
 .ifndef KBD
         txa
         sta     SHIFTSIGNEXT
@@ -166,10 +126,8 @@ L4098:
         sta     CURDVC
   .endif
         sta     LASTPT+1
-  .ifndef AIM65
   .if .defined(CONFIG_NULL) || .defined(CONFIG_PRINTNULLS)
         sta     Z15
-  .endif
   .endif
   .ifndef CONFIG_11
         sta     POSX
@@ -177,14 +135,10 @@ L4098:
         pha
         sta     Z14
   .ifndef CBM2
-   .ifndef AIM65
-   .ifndef SYM1
     .ifndef MICROTAN
         lda     #$03
         sta     DSCLEN
     .endif
-   .endif
-   .endif
     .ifndef CONFIG_11
         lda     #$2C
         sta     LINNUM+1
@@ -201,64 +155,86 @@ L4098:
         sta     INPUTBUFFER-3
         sta     INPUTBUFFER-4
   .endif
+
         ldx     #TEMPST
         stx     TEMPPT
+
+.ifndef CONFIG_2
+
+; ask for ram size
 .ifndef CONFIG_CBM_ALL
         lda     #<QT_MEMORY_SIZE
         ldy     #>QT_MEMORY_SIZE
         jsr     STROUT
   .ifdef APPLE
-        jsr     INLINX
+        jsr     OUTQUES
+        jsr     OUTSP
+        ldx     #$80
+        jmp     INLIN1
   .else
         jsr     NXIN
   .endif
         stx     TXTPTR
         sty     TXTPTR+1
         jsr     CHRGET
-  .ifndef AIM65
-    .ifndef SYM1
-        cmp     #$41
-        beq     PR_WRITTEN_BY
-    .endif
-  .endif
+        ;cmp     #$41
+        ;beq     PR_WRITTEN_BY
         tay
         bne     L40EE
 .endif
-.ifndef CBM2
+
+.else
+
+
         lda     #<RAMSTART2
-.endif
+
         ldy     #>RAMSTART2
+
 .ifdef CONFIG_2
         sta     TXTTAB
         sty     TXTTAB+1
 .endif
+
+.endif
+
         sta     LINNUM
         sty     LINNUM+1
+
 .ifdef CBM2
-		tay
+        tay
 .else
         ldy     #$00
 .endif
+
+; look for top of ram
 L40D7:
         inc     LINNUM
         bne     L40DD
         inc     LINNUM+1
+
+.ifdef CONFIG_APPLE
+; run up to $B0.  assume prodos & friends are in town
+.ifndef APPLE1
+        lda LINNUM+1
+        cmp #$B0
+        beq L40FA
+.endif
+.endif
+
 .ifdef CBM1
 ; CBM: hard RAM top limit is $8000
         lda     LINNUM+1
         cmp     #$80
         beq     L40FA
 .endif
+
+
 .ifdef CBM2
 ; optimized version of the CBM1 code
         bmi     L40FA
 .endif
-.if .def(AIM65)
-; AIM65: hard RAM top limit is $A000
-        lda     LINNUM+1
-        cmp     #$A0
-        beq     L40FA
-.endif
+
+
 L40DD:
 .ifdef CONFIG_2
         lda     #$55 ; 01010101 / 10101010
@@ -271,6 +247,7 @@ L40DD:
         asl     a
         sta     (LINNUM),y
         cmp     (LINNUM),y
+
 .ifdef CONFIG_CBM_ALL
         beq     L40D7
 .else
@@ -293,23 +270,24 @@ L40FA:
         ldy     LINNUM+1
         sta     MEMSIZ
         sty     MEMSIZ+1
-.if !(.def(MICROTAN) || .def(AIM65) || .def(SYM1))
+.ifndef MICROTAN
         sta     FRETOP
         sty     FRETOP+1
 .endif
 L4106:
 .ifndef CONFIG_CBM_ALL
-  .ifdef APPLE
+.ifndef CONFIG_2
+  .ifdef APPLE_2
         lda     #$FF
-        jmp     L2829
-        .word	STROUT ; PATCH!
-        jsr     NXIN
+        ;jmp     L2829
+        ;.word	STROUT ; PATCH! -- looks like a patch
+        ;jsr     NXIN
   .else
+  ; ask for screen width
         lda     #<QT_TERMINAL_WIDTH
         ldy     #>QT_TERMINAL_WIDTH
         jsr     STROUT
         jsr     NXIN
-  .endif
         stx     TXTPTR
         sty     TXTPTR+1
         jsr     CHRGET
@@ -321,21 +299,20 @@ L4106:
         lda     LINNUM
         cmp     #$10
         bcc     L4106
+  .endif
+.else
+        lda #WIDTH
+
+.endif
+
 L2829:
         sta     Z17
+
 L4129:
-  .ifdef AIM65
-        sbc     #$0A
-  .else
         sbc     #$0E
-  .endif
         bcs     L4129
         eor     #$FF
-  .ifdef AIM65
-        sbc     #$08
-  .else
         sbc     #$0C
-  .endif
         clc
         adc     Z17
         sta     Z18
@@ -420,12 +397,6 @@ L4192:
 .endif
 .ifdef CONFIG_CBM_ALL
         jmp     RESTART
-.elseif .def(AIM65)
-        lda     #<CRDO
-        ldy     #>CRDO
-        sta     GORESTART+1
-        sty     GORESTART+2
-        jmp     RESTART
 .else
         lda     #<STROUT
         ldy     #>STROUT
@@ -448,9 +419,9 @@ QT_WANT:
         .byte   "WANT SIN-COS-TAN-ATN"
         .byte   0
   .endif
+
 QT_WRITTEN_BY:
   .ifndef CONFIG_CBM_ALL
-  .if !(.def(AIM65) || .def(SYM1))
     .ifdef APPLE
 		asc80 "COPYRIGHT 1977 BY MICROSOFT CO"
 		.byte	CR,0
@@ -463,15 +434,13 @@ QT_WRITTEN_BY:
       .endif
         .byte   CR,LF,0
     .endif
-   .endif
+
+.ifdef APPLE_2
 QT_MEMORY_SIZE:
         .byte   "MEMORY SIZE"
         .byte   0
 QT_TERMINAL_WIDTH:
-    .if !(.def(AIM65) || .def(SYM1))
-        .byte   "TERMINAL "
-    .endif
-        .byte   "WIDTH"
+        .byte   "TERMINAL WIDTH"
         .byte   0
   .endif
 QT_BYTES_FREE:
@@ -494,12 +463,6 @@ QT_BASIC:
   .ifdef MICROTAN
         .byte   "MICROTAN BASIC"
   .endif
-  .ifdef AIM65
-        .byte   "  AIM 65 BASIC V1.1"
-  .endif
-  .ifdef SYM1
-        .byte   "BASIC V1.1"
-  .endif
   .ifdef CBM1
         .byte   $13 ; HOME
         .byte   "*** COMMODORE BASIC ***"
@@ -517,17 +480,11 @@ QT_BASIC:
         .byte   CR,LF
     .ifdef MICROTAN
         .byte   "(C) 1980 MICROSOFT"
-    .elseif .def(AIM65)
-        .byte   0
-        .byte   "(C) 1978 MICROSOFT"
-    .elseif .def(SYM1)
-        .byte   "COPYRIGHT 1978 SYNERTEK SYSTEMS CORP."
     .else
         .byte   "COPYRIGHT 1977 BY MICROSOFT CO."
     .endif
-        .byte   CR,LF
-      .ifndef AIM65
-        .byte   0
-      .endif
+        .byte   CR,LF,0
   .endif
 .endif
+
+.endif ;/* KBD */

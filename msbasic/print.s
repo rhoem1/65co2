@@ -1,16 +1,5 @@
 .segment "CODE"
 
-.ifdef AIM65
-PRINT:
-        lda     PRIFLG
-        sta     ZBE
-        jsr     L297E
-LB8B1:
-        lda     ZBE
-        sta     PRIFLG
-        rts
-.endif
-
 PRSTRING:
         jsr     STRPRT
 L297E:
@@ -19,16 +8,10 @@ L297E:
 ; ----------------------------------------------------------------------------
 ; "PRINT" STATEMENT
 ; ----------------------------------------------------------------------------
-.ifndef AIM65
 PRINT:
-.endif
         beq     CRDO
 PRINT2:
         beq     L29DD
-.ifdef AIM65
-        jsr     LB89D
-        beq     L29DD
-.endif
         cmp     #TOKEN_TAB
         beq     L29F5
         cmp     #TOKEN_SPC
@@ -66,6 +49,7 @@ PRINT2:
 L29B1:
 .endif
         jsr     STRPRT
+        jmp     L297E
 .ifdef KBD
         jmp     L297E
 .else
@@ -99,14 +83,14 @@ L29B9:
         ldx     #<(INPUTBUFFER-1)
         ldy     #>(INPUTBUFFER-1)
   .else
-    .ifdef ZP_INPUTBUFFER
+    .ifndef APPLE
         ldy     #$00
         sty     INPUTBUFFER,x
         ldx     #LINNUM+1
     .endif
-    .if .def(MICROTAN) || .def(SYM1)
+    .ifdef MICROTAN
         bne     CRDO2
-    .endif
+	.endif
   .endif
   .ifdef CONFIG_FILE
         lda     CURDVC
@@ -132,7 +116,7 @@ CRDO2:
         jsr     OUTDO
 
 PRINTNULLS:
-.if .def(KBD) || .def(AIM65)
+.ifdef KBD
         lda     #$00
         sta     POSX
         eor     #$FF
@@ -150,11 +134,7 @@ PRINTNULLS:
         pha
         ldx     Z15
         beq     L29D9
-      .ifdef SYM1
-        lda     #$FF
-      .else
         lda     #$00
-      .endif
 L29D3:
         jsr     OUTDO
         dex
@@ -188,7 +168,7 @@ L29EA:
 .endif
         sec
 L29EB:
-.if .def(CONFIG_CBM_ALL) || .def(AIM65)
+.ifdef CONFIG_CBM_ALL
         sbc     #$0A
 .else
   .ifdef KBD
@@ -201,14 +181,18 @@ L29EB:
         eor     #$FF
         adc     #$01
         bne     L2A08
+
+; tab?
 L29F5:
 .ifdef CONFIG_11A
         php
 .else
         pha
 .endif
+
         jsr     GTBYTC
         cmp     #')'
+
 .ifdef CONFIG_11A
   .ifdef CONFIG_2
         bne     SYNERR4
@@ -221,28 +205,41 @@ L29F5:
   .ifdef CONFIG_11
         jne     SYNERR
   .else
+  
         bne     SYNERR4
+
   .endif
+
         pla
         cmp     #TOKEN_TAB
+
   .ifdef CONFIG_11
         bne     L2A09
   .else
+
         bne     L2A0A
+
   .endif
 .endif
+; yep, it's a tab and we've got a good number
+
+; n = x - POSX
         txa
         sbc     POSX
         bcc     L2A0D
+
 .ifndef CONFIG_11
         beq     L2A0D
 .endif
+
 L2A08:
+
         tax
 .ifdef CONFIG_11
 L2A09:
         inx
 .endif
+
 L2A0A:
 .ifndef CONFIG_11
         jsr     OUTSP
@@ -253,9 +250,12 @@ L2A0A:
 .else
         bne     L2A13
 .endif
+
+; done tabbing, lets move on
 L2A0D:
         jsr     CHRGET
         jmp     PRINT2
+
 .ifdef CONFIG_11
 L2A13:
         jsr     OUTSP
@@ -301,8 +301,9 @@ LCA40:
         lda     #$1D ; CRSR RIGHT
 .else
         lda     #$20
+		jmp     OUTDO
 .endif
-        .byte   $2C
+        ;.byte   $2C ;; doing a BIT mucks with flags
 OUTQUES:
         lda     #$3F
 
@@ -348,10 +349,7 @@ LCA6A:
         lda     POSX
         cmp     Z17
         bne     L2A4C
-  .ifdef AIM65
-        lda #$00
-        sta POSX
-  .elseif .def(APPLE)
+  .ifdef APPLE_2
         nop ; PATCH!
         nop ; don't print CR
         nop

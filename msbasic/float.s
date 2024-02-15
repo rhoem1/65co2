@@ -774,7 +774,7 @@ FDIVT:
         jsr     ADD_EXPONENTS
         inc     FAC
         beq     JOV
-        ldx     #-MANTISSA_BYTES
+        ldx     #<-MANTISSA_BYTES
         lda     #$01
 L39A1:
         ldy     ARG+1
@@ -1197,12 +1197,6 @@ L3B6F:
         dex
         bpl     L3B6F
         bcc     FIN2
-.ifdef SYM1
-        cmp     #$26
-        bne     LDABB
-        jmp     LCDFE
-LDABB:
-.endif
         cmp     #$2D
         bne     L3B7E
         stx     SERLEN
@@ -1429,12 +1423,13 @@ FOUT:
 ; (THIS IS USED AS A FLAG)
 ; ----------------------------------------------------------------------------
 FOUT1:
-        lda     #$20
+        lda     #$2D
+				dey
         bit     FACSIGN
         bpl     L3C73
-        lda     #$2D
+        iny
+        sta     $FF,y
 L3C73:
-        sta     STACK2-1,y
         sta     FACSIGN
         sty     STRNG2
         iny
@@ -1452,9 +1447,9 @@ L3C8C:
         ldy     #>CON_BILLION
         jsr     FMULT
 .ifdef CONFIG_SMALL
-        lda     #-6 ; exponent adjustment
+        lda     #<-6 ; exponent adjustment
 .else
-        lda     #-9
+        lda     #<-9
 .endif
 L3C95:
         sta     INDX
@@ -1515,12 +1510,12 @@ L3CDF:
         ldy     STRNG2
         lda     #$2E
         iny
-        sta     STACK2-1,y
+        sta     $FF,y
         txa
         beq     L3CF0
         lda     #$30
         iny
-        sta     STACK2-1,y
+        sta     $FF,y
 L3CF0:
         sty     STRNG2
 ; ----------------------------------------------------------------------------
@@ -1570,12 +1565,12 @@ L3D23:
         iny
         tax
         and     #$7F
-        sta     STACK2-1,y
+        sta     $FF,y
         dec     INDX
         bne     L3D3E
         lda     #$2E
         iny
-        sta     STACK2-1,y
+        sta     $FF,y
 L3D3E:
         sty     STRNG2
         ldy     VARPNT
@@ -1597,7 +1592,7 @@ L3D3E:
 LDD96:
         ldy     STRNG2
 L3D4E:
-        lda     STACK2-1,y
+        lda     $FF,y
         dey
         cmp     #$30
         beq     L3D4E
@@ -1615,9 +1610,9 @@ L3D5B:
         tax
         lda     #$2D
 L3D6B:
-        sta     STACK2+1,y
+        sta     STACK+1,y
         lda     #$45
-        sta     STACK2,y
+        sta     STACK,y
         txa
         ldx     #$2F
         sec
@@ -1626,20 +1621,20 @@ L3D77:
         sbc     #$0A
         bcs     L3D77
         adc     #$3A
-        sta     STACK2+3,y
+        sta     STACK+3,y
         txa
-        sta     STACK2+2,y
+        sta     STACK+2,y
         lda     #$00
-        sta     STACK2+4,y
+        sta     STACK+4,y
         beq     L3D94
 FOUT4:
-        sta     STACK2-1,y
+        sta     $FF,y
 L3D8F:
         lda     #$00
-        sta     STACK2,y
+        sta     STACK,y
 L3D94:
-        lda     #<STACK2
-        ldy     #>STACK2
+        lda     #$00
+        ldy     #$01
         rts
 
 ; ----------------------------------------------------------------------------
